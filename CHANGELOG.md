@@ -19,3 +19,4 @@
 - Minor refactoring and stability improvements update #17
 - Minor refactoring and stability improvements update #18
 - Minor refactoring and stability improvements update #19
+- Minor refactoring and stability improvements update #20
