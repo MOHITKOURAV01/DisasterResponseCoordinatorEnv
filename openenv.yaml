@@ -1,0 +1,36 @@
+name: DisasterResponseCoordinatorEnv
+version: "1.0.0"
+description: |
+  Multi-agent disaster response coordination environment.
+  8 AI agents manage rescue operations across a dynamic graph-based crisis zone for 72 simulated hours.
+  Covers 4 themes: Multi-Agent, Long-Horizon Planning, World Modeling, Self-Improvement.
+author: Mohit Kourav
+tags:
+  - openenv
+  - disaster-response
+  - multi-agent
+  - india
+tasks:
+  - id: village_flood_rescue
+    description: "Single village flood rescue in Bihar. Easy."
+    difficulty: easy
+  - id: multi_district_cyclone
+    description: "Multi-district cyclone response in Odisha. Medium."
+    difficulty: medium
+  - id: earthquake_aftershock
+    description: "Earthquake with aftershock cascades in Gujarat. Hard."
+    difficulty: hard
+  - id: full_72hr_operation
+    description: "Full 72-hour super cyclone operation in Tamil Nadu. Expert."
+    difficulty: expert
+action_space:
+  type: mcp_tools
+  tools:
+    - dispatch_team
+    - allocate_resource
+    - re_route
+    - request_airlift
+    - order_evacuation
+    - deploy_scout
+    - setup_comms
+    - advance_hour
