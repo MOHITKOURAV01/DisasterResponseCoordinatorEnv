@@ -7,3 +7,4 @@
 - Minor refactoring and stability improvements update #5
 - Minor refactoring and stability improvements update #6
 - Minor refactoring and stability improvements update #7
+- Minor refactoring and stability improvements update #8
