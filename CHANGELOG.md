@@ -22,3 +22,4 @@
 - Minor refactoring and stability improvements update #20
 - Minor refactoring and stability improvements update #21
 - Minor refactoring and stability improvements update #22
+- Minor refactoring and stability improvements update #23
