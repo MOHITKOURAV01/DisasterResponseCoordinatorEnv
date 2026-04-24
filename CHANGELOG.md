@@ -38,3 +38,4 @@
 - Minor refactoring and stability improvements update #36
 - Minor refactoring and stability improvements update #37
 - Minor refactoring and stability improvements update #38
+- Minor refactoring and stability improvements update #39
