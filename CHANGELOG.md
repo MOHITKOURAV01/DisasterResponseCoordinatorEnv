@@ -16,3 +16,4 @@
 - Minor refactoring and stability improvements update #14
 - Minor refactoring and stability improvements update #15
 - Minor refactoring and stability improvements update #16
+- Minor refactoring and stability improvements update #17
