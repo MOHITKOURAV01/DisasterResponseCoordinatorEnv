@@ -28,3 +28,4 @@
 - Minor refactoring and stability improvements update #26
 - Minor refactoring and stability improvements update #27
 - Minor refactoring and stability improvements update #28
+- Minor refactoring and stability improvements update #29
