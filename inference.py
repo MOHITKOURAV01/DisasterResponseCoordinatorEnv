@@ -4,7 +4,12 @@ import httpx
 import sys
 from openai import OpenAI
 
-HF_TOKEN = os.getenv("HF_TOKEN", "")
+HF_TOKEN = os.getenv("HF_TOKEN")
+if not HF_TOKEN:
+    raise ValueError(
+        "HF_TOKEN environment variable is required. "
+        "Set it with: export HF_TOKEN=your_token_here"
+    )
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api-inference.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-1.5B-Instruct")
 ENV_URL = os.getenv("ENV_URL", "http://localhost:7860")
@@ -84,9 +89,7 @@ def smart_fallback(obs: dict, step: int) -> dict:
 
 def run_episode(task_id: str, use_llm: bool = True):
     """Run a single episode on the environment."""
-    print(f"\n{'='*60}")
-    print(f"[START] Task: {task_id}")
-    print(f"{'='*60}")
+    print(f"[START] task={task_id} env=DisasterResponseCoordinatorEnv model={MODEL_NAME}", flush=True)
 
     # Reset environment
     resp = httpx.post(f"{ENV_URL}/reset", json={"task_id": task_id}, timeout=30)
@@ -168,16 +171,14 @@ def run_episode(task_id: str, use_llm: bool = True):
             if events:
                 event = f" | EVENT: {events[0]}"
 
-            print(f"[STEP {step:3d}] {action['tool_name']:20s} reward={reward:+.3f} total={total_reward:.3f}{event}")
+            _done_str = "true" if done else "false"
+            _err_str = "null"
+            print(f"[STEP] step={step} action={action['tool_name']} reward={reward:.2f} done={_done_str} error={_err_str}", flush=True)
 
             if done:
                 grader = result.get("info", {}).get("grader_score", 0)
-                print(f"\n[END] Episode complete!")
-                print(f"  Grader score: {grader:.4f}")
-                print(f"  Total reward: {total_reward:.4f}")
-                print(f"  Steps taken: {step}")
-                print(f"  Rescued: {obs.get('total_rescued', 0)}")
-                print(f"  Deaths: {obs.get('total_deaths', 0)}")
+                _success = "true" if grader >= 0.5 else "false"
+                print(f"[END] success={_success} steps={step} score={grader:.3f} rewards={total_reward:.2f}", flush=True)
         except Exception as e:
             print(f"[ERROR] Step failed: {e}")
             break
