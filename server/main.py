@@ -86,13 +86,14 @@ def tasks():
     return {"tasks": get_available_tasks()}
 
 
-# Serve training plots as static files
-try:
-    plots_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "plots")
-    if os.path.exists(plots_dir):
-        app.mount("/plots", StaticFiles(directory=plots_dir), name="plots")
-except Exception:
-    pass
+from fastapi.responses import FileResponse
+
+@app.get("/plots/{image_name}")
+def get_plot(image_name: str):
+    image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "plots", image_name)
+    if os.path.exists(image_path):
+        return FileResponse(image_path)
+    return JSONResponse(status_code=404, content={"error": "Plot not found"})
 
 
 # ==================== DASHBOARD HTML ====================
