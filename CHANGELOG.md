@@ -57,3 +57,4 @@
 - Minor refactoring and stability improvements update #55
 - Minor refactoring and stability improvements update #56
 - Minor refactoring and stability improvements update #57
+- Minor refactoring and stability improvements update #58
