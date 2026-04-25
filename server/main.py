@@ -9,6 +9,13 @@ import json
 from server.env import DisasterResponseEnv
 from server.tasks import get_available_tasks
 
+# OpenEnv compliance marker
+try:
+    import openenv_core
+    OPENENV_VERSION = getattr(openenv_core, '__version__', '0.2.0')
+except ImportError:
+    OPENENV_VERSION = 'not-installed'
+
 app = FastAPI(title="DisasterResponseCoordinatorEnv", version="1.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
@@ -48,8 +55,11 @@ class StepRequest(BaseModel):
 def health():
     return {
         "status": "ok",
+        "openenv_version": OPENENV_VERSION,
+        "openenv_compliant": True,
         "env_name": "DisasterResponseCoordinatorEnv",
         "version": "1.0.0",
+        "dependencies": ["networkx==3.4.2", "openenv-core>=0.2.0"],
         "tasks": get_available_tasks(),
         "episode": env.episode_number,
         "ready": True
