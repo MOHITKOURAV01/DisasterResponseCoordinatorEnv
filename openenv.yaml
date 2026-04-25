@@ -34,3 +34,10 @@ action_space:
     - deploy_scout
     - setup_comms
     - advance_hour
+reward_space:
+  type: continuous
+  range: [-0.5, 1.0]
+  description: >
+    12-signal reward function. Positive for rescues,
+    negative for wasted resources. Self-adaptive bonus
+    based on episode history.

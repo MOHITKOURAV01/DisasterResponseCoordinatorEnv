@@ -79,8 +79,8 @@ Our training pipeline uses HuggingFace TRL's GRPOTrainer with a reward function 
 
 | Metric | Random Baseline | Smart Agent | Improvement |
 |--------|----------------|-------------|-------------|
-| Grader Score | ~0.15 | ~0.65+ | +330% |
-| People Rescued | ~12/50 | ~38/50 | +217% |
+| Grader Score | ~0.15 | ~0.60+ | +300% |
+| People Rescued | ~12/50 | ~36/50 | +200% |
 | Resource Efficiency | ~30% | ~70% | +133% |
 
 ![Step Rewards](plots/step_rewards.png)
@@ -122,8 +122,8 @@ This environment combines techniques from:
 ## Links
 
 - [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
-- [YouTube Demo Video (90s)](#)
-- [HuggingFace Blog Post](#)
+- [YouTube Demo Video (90s)](YOUR_YOUTUBE_URL_HERE)
+- [HuggingFace Blog Post](https://huggingface.co/blog/mohitkourav/disaster-response-coordinator-env)
 - [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
 
 ## Author
