@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+.DS_Store
+disaster_grpo_output/
+disaster_lora_model/
+plots/
+*.patch
