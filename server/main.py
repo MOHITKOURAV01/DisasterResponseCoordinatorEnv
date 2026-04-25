@@ -12,6 +12,23 @@ from server.tasks import get_available_tasks
 app = FastAPI(title="DisasterResponseCoordinatorEnv", version="1.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class EmptyBodyMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        if request.method == "POST":
+            body = await request.body()
+            if not body:
+                from starlette.requests import Request
+                from io import BytesIO
+                scope = request.scope
+                async def receive():
+                    return {"type": "http.request", "body": b"{}"}
+                request = Request(scope, receive)
+        return await call_next(request)
+
+app.add_middleware(EmptyBodyMiddleware)
+
 # Global environment instance
 env = DisasterResponseEnv()
 
@@ -29,15 +46,22 @@ class StepRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    tasks = get_available_tasks()
-    return {"status": "ok", "env_name": "DisasterResponseCoordinatorEnv", "version": "1.0.0",
-            "tasks": tasks, "episode": env.episode_number}
+    return {
+        "status": "ok",
+        "env_name": "DisasterResponseCoordinatorEnv",
+        "version": "1.0.0",
+        "tasks": get_available_tasks(),
+        "episode": env.episode_number,
+        "ready": True
+    }
 
 
 @app.post("/reset")
 def reset(req: ResetRequest = None):
-    body = req if req else ResetRequest()
-    task_id = body.task_id or "village_flood_rescue"
+    """Handle both JSON body and empty body."""
+    if req is None:
+        req = ResetRequest()
+    task_id = req.task_id or "village_flood_rescue"
     try:
         obs = env.reset(task_id)
         return obs
@@ -56,7 +80,11 @@ def step(req: StepRequest):
 
 @app.get("/state")
 def state():
-    return env.state()
+    try:
+        return env.state()
+    except Exception:
+        # Return empty state if env not yet initialized
+        return {"observation": {"zones":[],"hospitals":[],"roads":[],"resources":{},"teams":[],"agent_reports":{},"current_hour":0,"current_phase":"rescue","dynamic_events":[],"step_number":0,"task_id":"","total_rescued":0,"total_deaths":0}, "total_reward":0,"action_history":[],"strategy_memory":[],"curriculum_difficulty":3.0,"episode_number":0,"current_weakness":"none","total_rescued":0,"total_deaths":0,"reward_stats":{},"grading_config":{},"max_hours":72,"resources":{},"done":False}
 
 
 # ==================== DASHBOARD APIs ====================
