@@ -317,40 +317,41 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#f0f2f5;color:#22
 .coop-banner{display:none;background:#D4EDDA;color:#155724;padding:6px 10px;border-radius:4px;text-align:center;font-size:10px;margin-top:4px}
 .action-log{
   font-family: 'Courier New', monospace;
-  font-size: 11.5px;
-  height: auto;
-  min-height: 60px;
-  max-height: 320px;
+  font-size: 12px;
+  max-height: 220px;
   overflow-y: auto;
   background: #0d1117;
   color: #e6edf3;
-  padding: 10px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid #30363d;
   line-height: 1.0;
-  transition: max-height 0.4s ease;
-  scroll-behavior: smooth;
 }
 .log-line{
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 2px;
-  border-bottom: 1px solid #1c2128;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  white-space: nowrap;
+  gap: 6px;
+  padding: 5px 4px;
+  border-bottom: 1px solid #161b22;
+  color: #e6edf3;
+  opacity: 1 !important;
+  transform: none !important;
 }
-.log-step{ color: #58a6ff; font-weight: 700; min-width: 28px; font-size: 10px; }
-.log-hour{ color: #8b949e; font-size: 9px; min-width: 22px; background: #161b22; padding: 1px 3px; border-radius: 3px; }
-.log-agent{ color: #d2a8ff; font-weight: 600; min-width: 55px; font-size: 10px; text-transform: capitalize; }
-.log-arrow{ color: #30363d; font-size: 12px; }
-.log-action{ color: #ffa657; font-weight: 600; min-width: 80px; font-size: 10px; }
-.log-params{ color: #8b949e; font-size: 9px; flex: 1; overflow: hidden; text-overflow: ellipsis; }
-.log-conflict{ background: #3d1f63; color: #d2a8ff; padding: 1px 5px; border-radius: 3px; font-size: 9px; white-space: nowrap; }
-.log-reward{ font-weight: 700; font-size: 11px; min-width: 40px; text-align: right; }
-.reward-pos{ color: #3fb950; }
-.reward-neg{ color: #f85149; }
+.log-step{ color:#58a6ff; font-weight:700; min-width:30px; }
+.log-hour{ color:#8b949e; font-size:10px; min-width:28px; }
+.log-agent{ color:#d2a8ff; font-weight:600; min-width:80px; }
+.log-arrow{ color:#444; }
+.log-action{ color:#ffa657; font-weight:600; min-width:110px; }
+.log-params{ color:#8b949e; font-size:11px; flex:1; 
+             overflow:hidden; text-overflow:ellipsis; 
+             white-space:nowrap; }
+.log-conflict{ background:#2d1f4e; color:#b392f0; 
+               padding:1px 6px; border-radius:3px; 
+               font-size:10px; white-space:nowrap; }
+.log-reward{ font-weight:700; font-size:12px; 
+             min-width:44px; text-align:right; }
+.reward-pos{ color:#3fb950; }
+.reward-neg{ color:#f85149; }
 .action-log::-webkit-scrollbar{ width: 4px; }
 .action-log::-webkit-scrollbar-track{ background: #161b22; }
 .action-log::-webkit-scrollbar-thumb{ background: #30363d; border-radius: 2px; }
@@ -551,7 +552,13 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#f0f2f5;color:#22
       </button>
     </div>
   </div>
-  <div class="action-log" id="action-log"><div class="log-line" style="color:#888">Click "Run Episode" to start...</div></div>
+  <div class="action-log" id="action-log">
+    <div class="log-placeholder" 
+         style="color:#8b949e; font-family:monospace; 
+                font-size:11px; padding:6px 4px;">
+      Waiting for episode to start...
+    </div>
+  </div>
 </div>
 
 <!-- SECTIONS E + F: TIMELINE + SELF-IMPROVEMENT -->
@@ -953,69 +960,60 @@ function formatParams(p) {
   return parts.length > 0 ? parts.join(' ') : JSON.stringify(p).slice(0, 30);
 }
 
-function addLogLine(step, agentName, actionName, params, reward, conflict, hour) {
+function addLogLine(step, agentName, actionName, paramStr, reward, conflict, hour) {
   const log = document.getElementById('action-log');
-  const isPos = reward >= 0;
+  if (!log) return;
   
-  let paramStr = '';
-  if (typeof params === 'string') {
-    paramStr = params;
-  } else if (params && typeof params === 'object') {
-    paramStr = formatParams(params);
-  }
-
-  let conflictBadge = '';
+  // Remove placeholder if present
+  const placeholder = log.querySelector('.log-placeholder');
+  if (placeholder) placeholder.remove();
+  
+  const isPos = parseFloat(reward) >= 0;
+  const rewardVal = parseFloat(reward) || 0;
+  
+  // Short conflict label
+  let conflictHtml = '';
   if (conflict && conflict.length > 0) {
-    const shortConflict = conflict.split(':')[0].trim();
-    conflictBadge = `<span class="log-conflict">${shortConflict}</span>`;
+    const parts = conflict.split(':');
+    const label = parts[0].trim().slice(0, 20);
+    conflictHtml = `<span class="log-conflict">${label}</span>`;
   }
   
-  const icon = ACTION_ICONS[actionName] || '▶';
+  // Clean params — no emojis, just text
+  const cleanParams = (paramStr || '').replace(/[^\w\s\-_:.,→]/g, '').slice(0, 35);
+  
   const line = document.createElement('div');
   line.className = 'log-line';
-  line.innerHTML = `
-    <span class="log-step">S${step}</span>
-    <span class="log-hour">H${hour !== undefined ? hour : ''}</span>
-    <span class="log-agent">${agentName || 'coord'}</span>
-    <span class="log-arrow">›</span>
-    <span class="log-action">${icon} ${actionName || 'action'}</span>
-    <span class="log-params">${paramStr || ''}</span>
-    ${conflictBadge}
-    <span class="log-reward ${isPos ? 'reward-pos' : 'reward-neg'}">
-      ${isPos ? '+' : ''}${reward.toFixed(2)}
-    </span>
-  `;
-  // Insert at top so newest is always visible without scrolling
-  if (log.firstChild && log.firstChild.style && 
-      log.firstChild.style.color === '#888') {
-    // Remove placeholder "Click Run Episode to start" message
-    log.removeChild(log.firstChild);
-  }
+  line.innerHTML =
+    `<span class="log-step">S${step}</span>` +
+    `<span class="log-hour">H${hour !== undefined ? hour : ''}</span>` +
+    `<span class="log-agent">${agentName || 'Coord'}</span>` +
+    `<span class="log-arrow">›</span>` +
+    `<span class="log-action">${actionName || 'step'}</span>` +
+    `<span class="log-params">${cleanParams}</span>` +
+    conflictHtml +
+    `<span class="log-reward ${isPos ? 'reward-pos' : 'reward-neg'}">${isPos ? '+' : ''}${rewardVal.toFixed(2)}</span>`;
+  
+  // Insert at top
   log.insertBefore(line, log.firstChild);
   
-  // Animate new line in
-  line.style.opacity = '0';
-  line.style.transform = 'translateX(-10px)';
-  requestAnimationFrame(() => {
-    line.style.transition = 'opacity 0.3s, transform 0.3s';
-    line.style.opacity = '1';
-    line.style.transform = 'translateX(0)';
-  });
-  
-  // Keep max 80 lines
-  while (log.children.length > 80) {
+  // Max 60 lines
+  while (log.children.length > 60) {
     log.removeChild(log.lastChild);
   }
   
+  // Update counter
   logStepCount++;
-  updateLogCount();
+  const counter = document.getElementById('log-step-count');
+  if (counter) counter.textContent = logStepCount + ' steps';
 }
 
 function clearLog() {
   const log = document.getElementById('action-log');
-  log.innerHTML = '<div style="color:#3fb950; font-family:monospace; padding:2px 0;">Log cleared. Ready for next episode.</div>';
+  log.innerHTML = '<div class="log-placeholder" style="color:#8b949e; font-family:monospace; font-size:11px; padding:6px 4px;">Log cleared. Ready for next episode.</div>';
   logStepCount = 0;
-  updateLogCount();
+  const counter = document.getElementById('log-step-count');
+  if (counter) counter.textContent = '0 steps';
 }
 
 let logStepCount = 0;
@@ -1166,26 +1164,50 @@ async function stepOnce() {
       }
     }
     
-    // Get richer action info
-    const actionHistory = data.observation?.action_history || [];
-    const lastAction = actionHistory[actionHistory.length - 1] || {};
-    
-    const toolName = lastAction.tool_name || data.action?.tool_name || 'step';
-    const params = lastAction.parameters || lastAction.params || {};
-    const stepReward = parseFloat(lastAction.reward ?? data.reward ?? 0);
-    const hour = lastAction.hour ?? data.observation?.current_hour ?? 0;
-    const conflictStr = lastAction.conflict_resolved || data.action?.conflict || '';
-    const stepNum = lastAction.step ?? data.observation?.step_number ?? 0;
-    
-    addLogLine(
-      stepNum,
-      'Coordinator',
-      toolName,
-      params,
-      stepReward,
-      conflictStr,
-      hour
-    );
+  // Extract action info from response
+  const obsHistory = (data.observation && data.observation.action_history) 
+    ? data.observation.action_history : [];
+  const lastEntry = obsHistory.length > 0 
+    ? obsHistory[obsHistory.length - 1] : null;
+  
+  const _toolName = (lastEntry && lastEntry.tool_name) 
+    || (data.action && data.action.tool_name) 
+    || 'advance_hour';
+  const _params = (lastEntry && lastEntry.parameters) 
+    || (lastEntry && lastEntry.params) 
+    || {};
+  const _reward = parseFloat(
+    (lastEntry && lastEntry.reward != null) ? lastEntry.reward 
+    : (data.reward != null ? data.reward : 0)
+  );
+  const _hour = (lastEntry && lastEntry.hour != null) 
+    ? lastEntry.hour 
+    : (data.observation && data.observation.current_hour != null 
+       ? data.observation.current_hour : 0);
+  const _conflict = (lastEntry && lastEntry.conflict_resolved) 
+    || (data.action && data.action.conflict) 
+    || '';
+  const _step = (lastEntry && lastEntry.step) 
+    || (data.observation && data.observation.step_number) 
+    || stepCount || 0;
+  
+  // Format params as readable text (no emojis)
+  function fmtP(p) {
+    if (!p || typeof p !== 'object') return '';
+    const out = [];
+    if (p.zone_id) out.push(p.zone_id);
+    if (p.team_type) out.push(p.team_type);
+    if (p.resource_type) out.push(p.resource_type);
+    if (p.amount !== undefined) out.push('x' + p.amount);
+    if (p.target_zone) out.push(p.target_zone);
+    if (out.length === 0) {
+      const vals = Object.values(p).slice(0, 2);
+      return vals.join(' ').slice(0, 30);
+    }
+    return out.join(' ').slice(0, 35);
+  }
+  
+  addLogLine(_step, 'Coordinator', _toolName, fmtP(_params), _reward, _conflict, _hour);
     
     await refreshAll();
     if(data.done) setText('auto-status', 'DONE! Score: '+(data.info?.grader_score||0).toFixed(3));
