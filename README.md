@@ -11,7 +11,7 @@ pinned: false
 **Autonomous Emergency Management Swarm — 8 AI Agents Coordinating Disaster Response**
 
 [![HuggingFace Space](https://img.shields.io/badge/🤗-HuggingFace%20Space-blue)](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/disaster-response-env/FINAL_training_notebook.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
 [![OpenEnv](https://img.shields.io/badge/OpenEnv-Compatible-green)]()
 
 > *When every second counts, AI must coordinate. This environment trains LLMs to save lives.*
@@ -107,7 +107,7 @@ uvicorn server.main:app --port 7860
 ```
 
 ### Training (Colab)
-Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/disaster-response-env/FINAL_training_notebook.ipynb) and click "Run All".
+Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb) and click "Run All".
 
 ## Research Foundations
 
