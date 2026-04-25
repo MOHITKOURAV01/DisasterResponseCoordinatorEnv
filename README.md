@@ -124,7 +124,7 @@ This environment combines techniques from:
 - [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
 - [YouTube Demo Video (90s)](#)
 - [HuggingFace Blog Post](#)
-- [Training Notebook (Colab)](#)
+- [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
 
 ## Author
 
