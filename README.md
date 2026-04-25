@@ -79,7 +79,7 @@ Our training pipeline uses HuggingFace TRL's GRPOTrainer with a reward function 
 
 | Metric | Random Baseline | Smart Agent | Improvement |
 |--------|----------------|-------------|-------------|
-| Grader Score | ~0.15 | ~0.60+ | +300% |
+| Grader Score | ~0.15 | ~0.60 | +300% |
 | People Rescued | ~12/50 | ~36/50 | +200% |
 | Resource Efficiency | ~30% | ~70% | +133% |
 
@@ -91,6 +91,10 @@ Our training pipeline uses HuggingFace TRL's GRPOTrainer with a reward function 
 
 ![Curriculum Evolution](plots/curriculum_evolution.png)
 *Adaptive curriculum shifts training scenarios to target agent's weaknesses.*
+
+![Training Loss](plots/loss_curve.png)
+*GRPO training loss curve over 25 steps. 
+Loss: 0.45 → 0.033 showing model convergence.*
 
 ## How to Run
 
@@ -108,6 +112,21 @@ uvicorn server.main:app --port 7860
 
 ### Training (Colab)
 Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb) and click "Run All".
+
+## API Quick Reference
+
+Connect to the live environment in 3 lines:
+
+```python
+import httpx
+obs = httpx.post(
+    "https://mohitkourav-disasterresponsecoordinatorenv.hf.space/reset",
+    json={"task_id": "village_flood_rescue"}
+).json()["observation"]
+# obs now has: zones, hospitals, roads, resources, agent_reports
+```
+
+See `examples/` folder for complete working scripts.
 
 ## Research Foundations
 
