@@ -143,72 +143,48 @@ class RewardCalculator:
         return reward
 
     def grade_episode(self, state: dict) -> float:
-        """Final grader score for the episode. Returns 0.001 to 0.999.
-
-        Composite of: rescue rate, equity, time efficiency, resource conservation,
-        communication recovery, and protocol compliance.
         """
-        zones = state.get("zones", [])
-        total_pop = max(sum(z.get("population", 0) for z in zones), 1)
-        total_rescued = state.get("total_rescued", 0)
-        total_deaths = state.get("total_deaths", 0)
-        current_hour = state.get("current_hour", 0)
-        max_hours = state.get("max_hours", 72)
-
-        # Component 1: Rescue rate (biggest weight)
-        rescue_rate = total_rescued / total_pop
-
-        # Component 2: Death avoidance
-        death_rate = total_deaths / total_pop
-        death_score = max(0, 1.0 - death_rate * 5)  # heavy penalty for deaths
-
-        # Component 3: Time efficiency (faster = better)
-        time_score = max(0, 1.0 - (current_hour / max(max_hours, 1)) * 0.5)
-
-        # Component 4: Equity — did all zones get help?
-        zone_rescue_rates = []
-        for z in zones:
-            pop = z.get("population", 0)
-            if pop > 0:
-                zone_rescue_rates.append(z.get("rescued", 0) / pop)
-        if zone_rescue_rates:
-            min_rate = min(zone_rescue_rates)
-            max_rate = max(zone_rescue_rates)
-            equity_score = min_rate / max(max_rate, 0.01) if max_rate > 0 else 1.0
-        else:
-            equity_score = 0.5
-
-        # Component 5: Resource conservation
-        resources = state.get("resources", {})
-        max_fuel = max(resources.get("max_fuel", 1), 1)
-        fuel_remaining = resources.get("fuel_helicopter", 0) / max_fuel
-        resource_score = min(fuel_remaining * 2, 1.0)  # bonus for not wasting
-
-        # Component 6: Communication recovery
-        dark_zones = [z for z in zones if not z.get("has_communication", True)]
-        comm_score = 1.0 - (len(dark_zones) / max(len(zones), 1))
-
-        # Get grading weights from task config
-        weights = state.get("grading_config", {})
-        rescue_w = weights.get("rescue_weight", 0.40)
-        time_w = weights.get("time_weight", 0.15)
-        resource_w = weights.get("resource_efficiency_weight", 0.10)
-        equity_w = weights.get("equity_weight", 0.15)
-
-        # Weighted composite
-        score = (
-            rescue_rate * rescue_w
-            + death_score * 0.10
-            + time_score * time_w
-            + equity_score * equity_w
-            + resource_score * resource_w
-            + comm_score * 0.05
-            + min(self.total_reward_this_episode / max(len(self.step_rewards), 1), 0.3) * 0.05
-        )
-
-        # Clamp to open interval (0, 1) — OpenEnv requirement
-        score = max(0.001, min(0.999, round(score, 4)))
-        return score
+        Deterministic grader. Score based on:
+        - rescue_rate: % people rescued (0-0.6 weight)
+        - efficiency: reward per step (0-0.2 weight)  
+        - phase_completion: did agent complete all 3 phases (0-0.1 weight)
+        - no_deaths: bonus for zero deaths (0.1 weight)
+        """
+        try:
+            total_pop = state.get("total_population", 0)
+            total_rescued = state.get("total_rescued", 0)
+            total_steps = max(state.get("current_hour", 1), 1)
+            deaths = state.get("total_deaths", 0)
+            current_phase = state.get("current_phase", "rescue")
+            total_reward = self.total_reward_this_episode
+            
+            if total_pop <= 0:
+                return 0.001
+            
+            # 1. Rescue rate (60% weight)
+            rescue_rate = min(total_rescued / total_pop, 1.0)
+            rescue_score = rescue_rate * 0.60
+            
+            # 2. Efficiency (20% weight)
+            reward_per_step = total_reward / total_steps
+            efficiency = min(max(reward_per_step / 0.5, 0), 1.0)
+            efficiency_score = efficiency * 0.20
+            
+            # 3. Phase progression (10% weight)
+            phase_scores = {"rescue": 0.33, "relief": 0.66, "rehabilitation": 1.0}
+            phase_score = phase_scores.get(current_phase, 0.33) * 0.10
+            
+            # 4. Death penalty (10% weight)
+            death_rate = deaths / max(total_pop, 1)
+            death_score = max(0, 1.0 - death_rate * 2) * 0.10
+            
+            raw_score = rescue_score + efficiency_score + phase_score + death_score
+            
+            # Clamp to strictly open interval (0.001, 0.999)
+            return max(0.001, min(raw_score, 0.999))
+            
+        except Exception:
+            return 0.001
 
     def get_stats(self) -> dict:
         """Return reward statistics for dashboard."""
