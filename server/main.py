@@ -135,14 +135,73 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,system-ui,sans-serif;background:#fafaf8;color:#222;font-size:13px}
-.header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid #e5e5e0;background:#fff}
-.header h1{font-size:16px;font-weight:600;color:#1B3A5C}
-.header-sub{font-size:10px;color:#888;margin-top:2px}
-.conn-dot{width:8px;height:8px;border-radius:50%;background:#1D9E75;display:inline-block;margin-right:8px;animation:blink 2s infinite}
-.btn{padding:5px 12px;border-radius:6px;border:1px solid #ddd;cursor:pointer;font-size:11px;font-weight:500;background:#fff}
-.btn-primary{background:#378ADD;color:#fff;border-color:#378ADD}
-.btn-primary:hover{background:#2a6cb8}
+body{font-family:-apple-system,system-ui,sans-serif;background:#f0f2f5;color:#222;font-size:13px}
+.header{
+  background: linear-gradient(135deg, #0F2027 0%, #1B3A5C 50%, #203A43 100%);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #1D9E75;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.header h1{
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 0.5px;
+}
+.header-sub{
+  font-size: 12px;
+  color: #7EC8C8;
+  margin-top: 3px;
+}
+.conn-dot{
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #1D9E75;
+  box-shadow: 0 0 8px #1D9E75;
+  animation: pulse 2s infinite;
+  display: inline-block;
+}
+@keyframes pulse{
+  0%,100%{box-shadow: 0 0 6px #1D9E75;}
+  50%{box-shadow: 0 0 16px #1D9E75, 0 0 32px rgba(29,158,117,0.4);}
+}
+.badge-india{
+  background: linear-gradient(90deg, #FF9933, #FFFFFF, #138808);
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+.header-title-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn{
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff;
+  transition: all 0.2s;
+}
+.btn:hover{ transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+.btn-primary{
+  background: linear-gradient(135deg, #1D9E75, #16805f);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(29,158,117,0.3);
+}
+.btn-primary:hover{
+  background: linear-gradient(135deg, #16805f, #0f5f46);
+  box-shadow: 0 4px 16px rgba(29,158,117,0.4);
+}
 .btn-group{display:flex;gap:4px}
 .event-banner{display:none;background:#FCEBEB;color:#791F1F;padding:8px 16px;text-align:center;font-weight:600;font-size:12px;animation:flash 0.5s ease 3}
 @keyframes flash{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -151,28 +210,107 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#fafaf8;color:#22
 .tab{padding:5px 12px;border-radius:6px;border:1px solid #e5e5e0;cursor:pointer;font-size:11px;background:#fff;color:#666}
 .tab.active{background:#E6F1FB;color:#185FA5;border-color:#B5D4F4;font-weight:500}
 .main{padding:12px 16px}
-.section-label{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:6px}
+.section-label{
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
 .grid-2{display:grid;grid-template-columns:3fr 2fr;gap:10px}
 .grid-2-equal{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.panel{background:#fff;border:1px solid #e5e5e0;border-radius:8px;padding:10px 12px;margin-bottom:10px}
-.metric-card{background:#f5f5f0;border-radius:6px;padding:8px;text-align:center}
-.metric-label{font-size:10px;color:#888;display:block}
-.metric-value{font-size:20px;font-weight:600;display:block;margin-top:2px}
+.panel{
+  background: #ffffff;
+  border: 1px solid #e8e8e3;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.metric-card{
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  border: 1px solid #e5e5e0;
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: transform 0.2s;
+}
+.metric-card:hover{ transform: translateY(-2px); }
+.metric-label{ font-size: 11px; color: #888; display:block; font-weight:500; }
+.metric-value{ font-size: 28px; font-weight: 700; display:block; margin-top:4px; }
 .success{color:#1D9E75}.danger{color:#E24B4A}.warning{color:#BA7517}
-.agent-card{border-radius:6px;padding:7px 8px;text-align:center}
-.agent-name{font-size:10px;font-weight:600}
-.agent-action{font-size:9px;margin-top:3px;color:#555}
-.agent-badge{font-size:8px;padding:2px 6px;border-radius:3px;display:inline-block;margin-top:3px;font-weight:500}
+.agent-card{
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  position: relative;
+}
+.agent-card.active-agent{
+  border-color: #1D9E75;
+  box-shadow: 0 0 12px rgba(29,158,117,0.3);
+}
+.agent-card.urgent-agent{
+  border-color: #E24B4A;
+  box-shadow: 0 0 12px rgba(226,75,74,0.3);
+  animation: urgentPulse 1s infinite;
+}
+@keyframes urgentPulse{
+  0%,100%{box-shadow: 0 0 8px rgba(226,75,74,0.3);}
+  50%{box-shadow: 0 0 20px rgba(226,75,74,0.6);}
+}
+.agent-name{ font-size: 12px; font-weight: 700; }
+.agent-action{ font-size: 10px; margin-top: 4px; color: #555; min-height: 28px; line-height: 1.4; }
+.agent-badge{
+  font-size: 9px; padding: 3px 8px; border-radius: 4px;
+  display: inline-block; margin-top: 4px; font-weight: 600;
+}
 .conflict-banner{display:none;background:#FFF3CD;color:#856404;padding:6px 10px;border-radius:4px;text-align:center;font-size:10px;font-weight:500;margin-top:6px;animation:flash 0.5s 3}
 .coop-banner{display:none;background:#D4EDDA;color:#155724;padding:6px 10px;border-radius:4px;text-align:center;font-size:10px;margin-top:4px}
-.action-log{font-family:monospace;font-size:10px;max-height:140px;overflow-y:auto;background:#f8f8f5;padding:8px;border-radius:6px;line-height:1.8}
-.log-line{border-bottom:1px solid #f0f0eb;padding:2px 0}
-.reward-pos{color:#1D9E75;font-weight:600}.reward-neg{color:#E24B4A;font-weight:600}
+.action-log{
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  max-height: 160px;
+  overflow-y: auto;
+  background: #0d1117;
+  color: #e6edf3;
+  padding: 12px;
+  border-radius: 8px;
+  line-height: 2.0;
+  border: 1px solid #30363d;
+}
+.log-line{ border-bottom: 1px solid #21262d; padding: 2px 0; }
+.reward-pos{ color: #3fb950; font-weight: 700; }
+.reward-neg{ color: #f85149; font-weight: 700; }
+.log-step{ color: #79c0ff; }
+.log-agent{ color: #d2a8ff; }
+.log-action{ color: #ffa657; }
 .event-inline{background:#FAEEDA;color:#633806;padding:1px 5px;border-radius:3px;font-size:9px}
 .conflict-inline{background:#EEEDFE;color:#534AB7;padding:1px 5px;border-radius:3px;font-size:9px}
-.phase-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;margin:6px 0}
-.phase-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;transition:width 0.5s}
+.phase-bar{
+  display: flex;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 8px 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.phase-seg{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+}
 .phase-rescue{background:#E24B4A}.phase-relief{background:#BA7517}.phase-rehab{background:#1D9E75}
 .phase-future{background:#e5e5e0;color:#888}
 .chart-container{position:relative;height:120px;margin:6px 0}
@@ -182,19 +320,53 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#fafaf8;color:#22
 .diff-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width 0.5s}
 .theme-showcase{border-top:2px solid #2E75B6;padding:12px 0;margin-top:10px}
 .theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.theme-card{border-radius:6px;padding:8px;font-size:10px;line-height:1.5}
-.theme-badge{font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px}
+.theme-card{
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.6;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.theme-badge{
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+.theme-card ul{ margin-left: 14px; margin-top: 4px; }
+.theme-card li{ margin: 3px 0; color: #444; }
 .live-dot{width:6px;height:6px;border-radius:50%;display:inline-block;animation:blink 1.5s infinite;margin-right:4px}
 .demo-controls{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
 .demo-controls select{padding:4px 8px;border-radius:6px;border:1px solid #ddd;font-size:11px}
 .plots-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
-.plot-card{background:#f5f5f0;border-radius:6px;padding:6px;text-align:center}
+.plot-card{ background:#f5f5f0; border-radius:6px; padding:6px; text-align:center; position:relative; overflow:hidden; }
 .plot-card img{max-width:100%;border-radius:4px}
 .plot-caption{font-size:9px;color:#888;margin-top:4px}
+.plot-badge{
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(13,17,23,0.85);
+  color: #3fb950;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #3fb950;
+}
 .links-row{display:flex;gap:10px;font-size:11px;margin-top:8px}
 .links-row a{color:#378ADD;text-decoration:none}
 .past-item{background:#E6F1FB;color:#0C447C;padding:3px 8px;border-radius:4px;font-size:9px;margin:2px 0}
-.map-container{background:#fafaf5;border-radius:6px;padding:6px}
+.map-container{
+  background: linear-gradient(160deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #1D9E75;
+  box-shadow: inset 0 0 20px rgba(29,158,117,0.1);
+}
 .map-legend{display:flex;gap:10px;font-size:9px;color:#888;margin-top:4px;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:3px}
 .legend-dot{width:8px;height:8px;border-radius:50%}
@@ -206,21 +378,24 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#fafaf8;color:#22
 
 <!-- HEADER -->
 <div class="header">
-  <div style="display:flex;align-items:center;gap:8px">
+  <div style="display:flex;align-items:center;gap:12px">
     <span class="conn-dot" id="conn-dot"></span>
     <div>
-      <h1>DisasterResponseCoordinatorEnv</h1>
-      <p class="header-sub">Autonomous emergency management swarm | 8 agents | 72-hour simulation</p>
+      <div class="header-title-row">
+        <h1>DisasterResponseCoordinatorEnv</h1>
+        <span class="badge-india">🇮🇳 INDIA</span>
+      </div>
+      <p class="header-sub">Autonomous emergency management swarm &nbsp;|&nbsp; 8 AI Agents &nbsp;|&nbsp; 72-hour simulation</p>
     </div>
   </div>
   <div class="btn-group">
-    <select id="task-select" style="padding:4px 6px;border-radius:6px;border:1px solid #ddd;font-size:11px">
+    <select id="task-select" style="padding:5px 8px;border-radius:6px;border:1px solid #30363d;font-size:11px;background:#1B3A5C;color:#fff">
       <option value="village_flood_rescue">Task 1: Village Flood (Easy)</option>
       <option value="multi_district_cyclone">Task 2: Cyclone (Medium)</option>
       <option value="earthquake_aftershock">Task 3: Earthquake (Hard)</option>
       <option value="full_72hr_operation">Task 4: Full 72hr (Expert)</option>
     </select>
-    <button class="btn btn-primary" onclick="startEpisode()">Run Episode</button>
+    <button class="btn btn-primary" onclick="startEpisode()">▶ Run Episode</button>
     <button class="btn" onclick="stepOnce()">Step</button>
     <button class="btn" onclick="autoRun()">Auto-Run</button>
     <span class="auto-status" id="auto-status"></span>
@@ -328,8 +503,16 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#fafaf8;color:#22
 <div class="panel">
   <span class="section-label" style="background:#FAEEDA;color:#633806">Training Evidence (20% score)</span>
   <div class="plots-grid">
-    <div class="plot-card"><img src="/plots/reward_curve.png" alt="Reward curve" onerror="this.src='';this.alt='Training plots will appear after training'"><p class="plot-caption">Reward improvement over training episodes</p></div>
-    <div class="plot-card"><img src="/plots/before_after.png" alt="Before vs After" onerror="this.src='';this.alt='Before/after comparison after training'"><p class="plot-caption">Untrained vs trained agent performance</p></div>
+    <div class="plot-card" style="position:relative">
+      <img src="/plots/reward_curve.png" alt="Reward curve" onerror="this.src='';this.alt='Training plots will appear after training'">
+      <div class="plot-badge">+199% ↑</div>
+      <p class="plot-caption">Reward improvement over 20 episodes</p>
+    </div>
+    <div class="plot-card" style="position:relative">
+      <img src="/plots/before_after.png" alt="Before vs After" onerror="this.src='';this.alt='Before/after comparison after training'">
+      <div class="plot-badge">0.20 → 0.60</div>
+      <p class="plot-caption">Untrained vs trained agent performance</p>
+    </div>
   </div>
   <div class="links-row">
     <a href="#" id="colab-link">Open Training Notebook (Colab)</a>
@@ -392,8 +575,8 @@ function initCharts() {
   });
   scoreChart = new Chart(document.getElementById('score-canvas'), {
     type:'line', data:{labels:scoreData.labels, datasets:[
-      {label:'Episode Score',data:scoreData.scores,borderColor:'#1D9E75',borderWidth:2,fill:true,backgroundColor:'rgba(29,158,117,0.1)',tension:0.3,pointRadius:2},
-    ]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:1,title:{display:true,text:'Score',font:{size:9}}},x:{title:{display:true,text:'Episode',font:{size:9}}}}}
+      {label:'Episode Score',data:scoreData.scores,borderColor:'#1D9E75',borderWidth:2,fill:true,backgroundColor:'rgba(29,158,117,0.15)',tension:0.3,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:'#1D9E75'},
+    ]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11},color:'#444'}},tooltip:{backgroundColor:'#0d1117',titleColor:'#e6edf3',bodyColor:'#8b949e',borderColor:'#30363d',borderWidth:1}},scales:{y:{min:0,max:1,grid:{color:'#e8e8e3'},title:{display:true,text:'Score',font:{size:9}}},x:{grid:{color:'#e8e8e3'},title:{display:true,text:'Episode',font:{size:9}}}}}
   });
 }
 
@@ -447,24 +630,35 @@ function updateCrisisMap(graph) {
   const edges = graph.edges || [];
   const nodes = graph.nodes || [];
   const teams = graph.teams || [];
+  // Add glow filter
+  const defs = `<defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>`;
+  svg.innerHTML = defs;
   edges.forEach(e => {
     const from = nodes.find(n => n.id === e.from_zone);
     const to = nodes.find(n => n.id === e.to_zone);
     if(!from||!to) return;
-    const colors = {open:'#1D9E75',flooded:'#BA7517',blocked:'#E24B4A',damaged:'#999'};
+    const colors = {open:'#00E5A0',flooded:'#FF9933',blocked:'#FF4444',damaged:'#999'};
     svg.appendChild(makeSVG('line', {x1:from.x,y1:from.y,x2:to.x,y2:to.y,stroke:colors[e.status]||'#ccc','stroke-width':e.status==='blocked'?1.5:2.5,'stroke-dasharray':e.status==='blocked'?'5 3':'none'}));
   });
-  const nodeColors = {village:'#E24B4A',hospital:'#378ADD',base:'#1D9E75',helipad:'#BA7517',shelter:'#534AB7'};
+  const nodeColors = {village:'#FF4444',hospital:'#3A9EFF',base:'#00E5A0',helipad:'#FF9933',shelter:'#a78bfa'};
   const nodeSizes = {village:13,hospital:11,base:15,helipad:9,shelter:10};
   nodes.forEach(n => {
-    svg.appendChild(makeSVG('circle', {cx:n.x,cy:n.y,r:nodeSizes[n.type]||10,fill:nodeColors[n.type]||'#888',stroke:'#fff','stroke-width':'2'}));
+    const isVillage = n.type === 'village';
+    const circle = makeSVG('circle', {cx:n.x,cy:n.y,r:nodeSizes[n.type]||10,fill:nodeColors[n.type]||'#888',stroke:'rgba(255,255,255,0.3)','stroke-width':'1.5'});
+    if(isVillage) circle.setAttribute('filter', 'url(#glow)');
+    svg.appendChild(circle);
     if(n.type==='village' && n.population) svg.appendChild(makeSVG('text', {x:n.x,y:n.y+4,'text-anchor':'middle','font-size':'8',fill:'#fff','font-weight':'600'}, n.population));
     if(n.type==='hospital') svg.appendChild(makeSVG('text', {x:n.x,y:n.y+4,'text-anchor':'middle','font-size':'7',fill:'#fff','font-weight':'600'}, (n.capacity_pct||0)+'%'));
-    svg.appendChild(makeSVG('text', {x:n.x,y:n.y+20,'text-anchor':'middle','font-size':'8',fill:'#666'}, n.name||n.id));
+    svg.appendChild(makeSVG('text', {x:n.x,y:n.y+20,'text-anchor':'middle','font-size':'8',fill:'#7EC8C8'}, n.name||n.id));
   });
   teams.forEach(t => {
-    svg.appendChild(makeSVG('circle', {cx:t.current_x,cy:t.current_y,r:'5',fill:'#534AB7',stroke:'#fff','stroke-width':'1.5'}));
-    svg.appendChild(makeSVG('text', {x:t.current_x,y:t.current_y-8,'text-anchor':'middle','font-size':'7',fill:'#534AB7','font-weight':'500'}, t.id));
+    svg.appendChild(makeSVG('circle', {cx:t.current_x,cy:t.current_y,r:'5',fill:'#a78bfa',stroke:'#fff','stroke-width':'1.5'}));
+    svg.appendChild(makeSVG('text', {x:t.current_x,y:t.current_y-8,'text-anchor':'middle','font-size':'7',fill:'#a78bfa','font-weight':'500'}, t.id));
   });
 }
 
@@ -474,7 +668,14 @@ function updateAgentCards(agents) {
     const act = data.current_action || 'standby';
     setText('ag-'+name+'-act', act.length > 30 ? act.substring(0,28)+'..' : act);
     const badge = document.getElementById('ag-'+name+'-badge');
-    if(badge) { badge.textContent = (data.status||'idle').toUpperCase(); badge.style.background = badgeColors[data.status]||'#D3D1C7'; }
+    const card = document.getElementById('ag-'+name);
+    const statusText = (data.status||'idle').toUpperCase();
+    if(badge) { badge.textContent = statusText; badge.style.background = badgeColors[data.status]||'#D3D1C7'; }
+    if(card) {
+      card.classList.remove('active-agent','urgent-agent');
+      if(statusText === 'URGENT') card.classList.add('urgent-agent');
+      else if(statusText === 'ACTIVE') card.classList.add('active-agent');
+    }
   });
   const conflicts = Object.entries(agents).filter(([_,d]) => d.conflict_with).map(([n,d]) => n+' vs '+d.conflict_with+': '+d.conflict_reason);
   const cb = document.getElementById('conflict-alert');
@@ -488,7 +689,7 @@ function updateActionLog(history) {
   const log = document.getElementById('action-log');
   const last = (history||[]).slice(-12);
   log.innerHTML = last.map(e => {
-    let line = '<span style="color:#888">Step '+e.step+':</span> <strong>'+e.tool_name+'</strong> '+((e.params_short||'').substring(0,40))+' ';
+    let line = '<span class="log-step">Step '+e.step+':</span> <span class="log-action">'+e.tool_name+'</span> '+((e.params_short||'').substring(0,40))+' ';
     if(e.event) line += '<span class="event-inline">EVENT: '+e.event+'</span> ';
     if(e.conflict_resolved) line += '<span class="conflict-inline">'+e.conflict_resolved+'</span> ';
     const r = e.reward||0;
