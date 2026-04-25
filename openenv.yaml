@@ -2,42 +2,98 @@ name: DisasterResponseCoordinatorEnv
 version: "1.0.0"
 description: |
   Multi-agent disaster response coordination environment.
-  8 AI agents manage rescue operations across a dynamic graph-based crisis zone for 72 simulated hours.
-  Covers 4 themes: Multi-Agent, Long-Horizon Planning, World Modeling, Self-Improvement.
+  8 AI agents manage rescue operations across a dynamic 
+  graph-based crisis zone for 72 simulated hours.
+  Covers all 4 themes: Multi-Agent, Long-Horizon Planning,
+  World Modeling, Self-Improvement.
 author: Mohit Kourav
 tags:
   - openenv
   - disaster-response
   - multi-agent
   - india
+  - long-horizon
+  - self-improvement
+
 tasks:
   - id: village_flood_rescue
-    description: "Single village flood rescue in Bihar. Easy."
+    description: "Single village flood rescue in Bihar. 50 people, 12 hours."
     difficulty: easy
   - id: multi_district_cyclone
-    description: "Multi-district cyclone response in Odisha. Medium."
+    description: "Multi-district cyclone in Odisha. 36 hours."
     difficulty: medium
   - id: earthquake_aftershock
-    description: "Earthquake with aftershock cascades in Gujarat. Hard."
+    description: "Gujarat earthquake with aftershocks. 48 hours."
     difficulty: hard
   - id: full_72hr_operation
-    description: "Full 72-hour super cyclone operation in Tamil Nadu. Expert."
+    description: "Tamil Nadu super cyclone. Full 72-hour operation."
     difficulty: expert
+
 action_space:
   type: mcp_tools
   tools:
-    - dispatch_team
-    - allocate_resource
-    - re_route
-    - request_airlift
-    - order_evacuation
-    - deploy_scout
-    - setup_comms
-    - advance_hour
+    - name: dispatch_team
+      description: "Send rescue/medical/supply team to a zone"
+      parameters: [zone_id, team_type, transport]
+    - name: allocate_resource
+      description: "Send food/water/medicine to a zone"
+      parameters: [zone_id, resource_type, quantity]
+    - name: re_route
+      description: "Change a team's route around blocked roads"
+      parameters: [team_id]
+    - name: request_airlift
+      description: "Deploy helicopter to inaccessible zone"
+      parameters: [zone_id]
+    - name: order_evacuation
+      description: "Evacuate a zone to a shelter"
+      parameters: [zone_id, shelter_id]
+    - name: deploy_scout
+      description: "Send drone to assess unknown zone"
+      parameters: [zone_id]
+    - name: setup_comms
+      description: "Restore communication in dark zone"
+      parameters: [zone_id]
+    - name: advance_hour
+      description: "Advance simulation by 1 hour"
+      parameters: []
+
+observation_space:
+  type: structured
+  fields:
+    - name: zones
+      type: list
+      description: "All crisis zones with population, rescued, injured counts"
+    - name: hospitals
+      type: list
+      description: "Hospital locations, capacity, current patients"
+    - name: roads
+      type: list
+      description: "Road network with status (open/flooded/blocked)"
+    - name: resources
+      type: dict
+      description: "Fuel, trucks, boats, medicine, food, water levels"
+    - name: teams
+      type: list
+      description: "All active rescue teams with location and status"
+    - name: agent_reports
+      type: dict
+      description: "Reports from all 8 specialized agents"
+    - name: current_hour
+      type: int
+      description: "Current simulation hour (0-72)"
+    - name: current_phase
+      type: str
+      description: "rescue | relief | rehabilitation"
+    - name: dynamic_events
+      type: list
+      description: "Active events: aftershock, hospital_overflow, comms_down"
+
 reward_space:
   type: continuous
   range: [-0.5, 1.0]
   description: >
-    12-signal reward function. Positive for rescues,
-    negative for wasted resources. Self-adaptive bonus
-    based on episode history.
+    12-signal reward function. Positive signals for rescues (+0.09),
+    resource efficiency (+0.07), comms setup (+0.06).
+    Negative for blocked roads (-0.08), deaths (-0.12),
+    wasted resources (-0.05). Self-adaptive bonus based on history.
+    Final episode grader score: strictly in (0.001, 0.999).
