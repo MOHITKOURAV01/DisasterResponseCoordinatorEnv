@@ -2,7 +2,6 @@ __pycache__
 *.pyc
 .git
 .env
-plots/
 training_notebook.ipynb
 node_modules
 .venv

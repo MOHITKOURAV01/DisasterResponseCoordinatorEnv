@@ -90,7 +90,7 @@ from fastapi.responses import FileResponse
 
 @app.get("/plots/{image_name}")
 def get_plot(image_name: str):
-    image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "plots", image_name)
+    image_path = os.path.join(os.getcwd(), "plots", image_name)
     if os.path.exists(image_path):
         return FileResponse(image_path)
     return JSONResponse(status_code=404, content={"error": "Plot not found"})
