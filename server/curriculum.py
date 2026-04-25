@@ -1,261 +1,172 @@
 from typing import Dict, List, Optional
 import random
 
-
 class CurriculumEngine:
-    """Self-improvement engine with 3 mechanisms:
-    A) Adaptive curriculum — auto-generates harder scenarios from failure analysis
-    B) Strategy memory — stores successful patterns for future episodes
-    C) Difficulty scaling — increases difficulty based on performance
-
-    Implements Theme 4: Self-Improvement for the hackathon.
     """
-
+    Real self-improvement: analyzes WHY episodes failed 
+    and generates harder scenarios targeting those weaknesses.
+    """
     def __init__(self):
-        self.episode_history: List[dict] = []
-        self.strategy_memory: List[dict] = []
-        self.difficulty: float = 3.0  # starts at 3/10
-        self.current_weakness: str = "none"
-        self.failure_counts: Dict[str, int] = {}
-        self.zone_type_performance: Dict[str, List[float]] = {}
-
-    def reset_episode(self):
-        """Called at start of new episode. Does NOT reset history/strategies."""
-        pass
-
-    def analyze_episode(self, state: dict) -> dict:
-        """Post-episode analysis. Identifies what went wrong and where.
-
-        Returns: {failures: {zone_id: {type, rescue_rate, reason}},
-                  overall_score: float, weakness: str}
+        self.episode_history = []
+        self.failure_patterns = {}
+        self.strategy_memory = []
+        self.generation = 0
+        self.difficulty = 3.0 # keep difficulty tracking for backward compatibility
+    
+    def record_episode(self, episode_data: dict):
+        """Called after every episode completes."""
+        self.episode_history.append(episode_data)
+        self._analyze_failure(episode_data)
+        if len(self.episode_history) % 3 == 0:
+            self._extract_strategy()
+    
+    def _analyze_failure(self, ep: dict):
+        """Identify what caused low score."""
+        score = ep.get("grader_score", 0)
+        if score >= 0.7:
+            return  # Success — no failure to analyze
+        
+        obs = ep.get("final_obs", {})
+        
+        # Pattern 1: Communication failures
+        dark_zones = sum(1 for z in obs.get("zones",[]) 
+                        if not z.get("has_communication", True))
+        if dark_zones > 2:
+            self.failure_patterns["comms_blackout"] = \
+                self.failure_patterns.get("comms_blackout", 0) + 1
+        
+        # Pattern 2: Resource exhaustion
+        fuel = obs.get("resources", {}).get("fuel_helicopter", 5)
+        if fuel <= 0:
+            self.failure_patterns["fuel_exhaustion"] = \
+                self.failure_patterns.get("fuel_exhaustion", 0) + 1
+        
+        # Pattern 3: Road blockage
+        steps = ep.get("action_history", [])
+        blocked_hits = sum(1 for s in steps 
+                          if s.get("reward", 0) < -0.05)
+        if blocked_hits > 3:
+            self.failure_patterns["road_blocks"] = \
+                self.failure_patterns.get("road_blocks", 0) + 1
+        
+        # Pattern 4: Late evacuation
+        deaths = obs.get("total_deaths", 0)
+        if deaths > 5:
+            self.failure_patterns["late_evacuation"] = \
+                self.failure_patterns.get("late_evacuation", 0) + 1
+    
+    def _extract_strategy(self):
+        """Convert failure patterns into learned strategies."""
+        if self.failure_patterns.get("comms_blackout", 0) >= 2:
+            rule = "Always setup_comms in dark zones before dispatching teams"
+            if not any(s["rule"] == rule for s in self.strategy_memory):
+                self.strategy_memory.append({"rule": rule, 
+                                             "confidence": 0.85})
+        
+        if self.failure_patterns.get("fuel_exhaustion", 0) >= 2:
+            rule = "Reserve minimum 2 helicopter fuel for critical extractions"
+            if not any(s["rule"] == rule for s in self.strategy_memory):
+                self.strategy_memory.append({"rule": rule,
+                                             "confidence": 0.90})
+        
+        if self.failure_patterns.get("road_blocks", 0) >= 2:
+            rule = "Use boats for flooded zones, re_route before dispatching"
+            if not any(s["rule"] == rule for s in self.strategy_memory):
+                self.strategy_memory.append({"rule": rule,
+                                             "confidence": 0.80})
+        
+        if self.failure_patterns.get("late_evacuation", 0) >= 2:
+            rule = "Prioritize evacuation of critical patients in first 6 hours"
+            if not any(s["rule"] == rule for s in self.strategy_memory):
+                self.strategy_memory.append({"rule": rule,
+                                             "confidence": 0.88})
+    
+    def generate_next_scenario(self, base_task: str) -> dict:
         """
-        zones = state.get("zones", [])
-        failures = {}
-        zone_scores = {}
-
-        for zone in zones:
-            zone_id = zone.get("zone_id", zone.get("id", ""))
-            pop = zone.get("population", 0)
-            if pop <= 0:
-                continue
-
-            rescued = zone.get("rescued", 0)
-            rescue_rate = rescued / pop
-            zone_type = zone.get("zone_type", zone.get("status", "unknown"))
-            zone_scores[zone_id] = rescue_rate
-
-            # Track per zone-type performance
-            if zone_type not in self.zone_type_performance:
-                self.zone_type_performance[zone_type] = []
-            self.zone_type_performance[zone_type].append(rescue_rate)
-
-            if rescue_rate < 0.5:
-                reason = self._diagnose_failure(zone, state)
-                failures[zone_id] = {
-                    "zone_type": zone_type,
-                    "rescue_rate": round(rescue_rate, 2),
-                    "reason": reason,
-                    "population": pop,
-                    "rescued": rescued,
-                }
-                # Count failure types
-                if reason not in self.failure_counts:
-                    self.failure_counts[reason] = 0
-                self.failure_counts[reason] += 1
-
-        # Find weakest zone type
-        weakness = "none"
-        worst_rate = 1.0
-        for ztype, rates in self.zone_type_performance.items():
-            avg = sum(rates[-5:]) / max(len(rates[-5:]), 1)
-            if avg < worst_rate:
-                worst_rate = avg
-                weakness = ztype
-        self.current_weakness = weakness
-
-        overall = sum(zone_scores.values()) / max(len(zone_scores), 1)
-
-        episode_record = {
-            "episode": len(self.episode_history) + 1,
-            "score": round(overall, 3),
-            "failures": failures,
-            "weakness": weakness,
-            "difficulty": self.difficulty,
+        Generate harder scenario targeting agent's weaknesses.
+        This is the actual self-improvement — not random difficulty.
+        """
+        self.generation += 1
+        overrides = {}
+        
+        # Target the most frequent failure pattern
+        if self.failure_patterns:
+            worst = max(self.failure_patterns, 
+                       key=self.failure_patterns.get)
+            
+            if worst == "comms_blackout":
+                # Force more dark zones in next scenario
+                overrides["extra_dark_zones"] = min(
+                    self.failure_patterns["comms_blackout"], 4)
+            
+            elif worst == "fuel_exhaustion":
+                # Reduce starting fuel
+                overrides["fuel_penalty"] = 0.6  # 40% less fuel
+            
+            elif worst == "road_blocks":
+                # More flooded roads
+                overrides["flood_severity"] = min(
+                    1.0, 0.4 + self.failure_patterns["road_blocks"]*0.1)
+            
+            elif worst == "late_evacuation":
+                # More critical patients, faster deterioration
+                overrides["critical_multiplier"] = 1.5
+        
+        return {
+            "base_task": base_task,
+            "generation": self.generation,
+            "targeting_weakness": max(self.failure_patterns, 
+                                     key=self.failure_patterns.get) 
+                                  if self.failure_patterns else "none",
+            "overrides": overrides,
+            "strategy_count": len(self.strategy_memory)
         }
-        self.episode_history.append(episode_record)
-
-        return episode_record
-
-    def _diagnose_failure(self, zone: dict, state: dict) -> str:
-        """Determine WHY a zone had low rescue rate."""
-        if not zone.get("has_communication", True):
-            return "communication_failure"
-
-        zone_status = zone.get("status", "safe")
-        if zone_status == "flooded":
-            return "flood_access"
-        elif zone_status == "destroyed":
-            return "structural_damage"
-        elif zone_status == "damaged":
-            return "road_damage"
-
-        if zone.get("injured_critical", 0) > 20:
-            return "medical_overwhelm"
-
-        return "resource_shortage"
-
+    
     def generate_harder_scenario(self, base_task_config: dict) -> dict:
-        """Auto-generate a harder version of the task targeting agent's weaknesses.
-        Modifies the base task config to increase difficulty in weak areas.
-
-        Returns: modified task config dict
-        """
+        """Compatibility method for env.py."""
         import copy
         config = copy.deepcopy(base_task_config)
-
-        # Increase difficulty
-        self.difficulty = min(10.0, self.difficulty + 0.5)
-
-        # If weakness is flood_access, add more flooded roads
-        if self.current_weakness in ("flooded", "flood_access"):
-            for edge in config.get("edges", []):
-                if edge.get("status") == "open" and random.random() < 0.3:
-                    edge["status"] = "flooded"
-
-        # If weakness is communication_failure, add more dark zones
-        elif self.current_weakness in ("communication_failure",):
-            for node in config.get("nodes", []):
-                if node.get("has_communication", True) and node.get("type") == "village":
-                    if random.random() < 0.3:
+        self.generation += 1
+        
+        # Target the most frequent failure pattern
+        if self.failure_patterns:
+            worst = max(self.failure_patterns, key=self.failure_patterns.get)
+            if worst == "comms_blackout":
+                for node in config.get("nodes", []):
+                    if node.get("type") == "village" and random.random() < 0.4:
                         node["has_communication"] = False
-                        node["last_contact_hours_ago"] = random.randint(3, 12)
-
-        # If weakness is medical_overwhelm, increase critical patients
-        elif self.current_weakness in ("medical_overwhelm",):
-            for node in config.get("nodes", []):
-                if node.get("type") == "village":
-                    node["injured_critical"] = int(node.get("injured_critical", 0) * 1.5)
-
-        # If weakness is road_damage, block more roads
-        elif self.current_weakness in ("damaged", "road_damage"):
-            for edge in config.get("edges", []):
-                if edge.get("status") == "open" and random.random() < 0.25:
-                    edge["status"] = "blocked"
-
-        # General difficulty: increase population
-        if self.difficulty > 5:
-            for node in config.get("nodes", []):
-                if node.get("type") == "village":
-                    node["population"] = int(node.get("population", 0) * 1.2)
-                    node["injured_critical"] = int(node.get("injured_critical", 0) * 1.1)
-
-        # Add more random events at higher difficulty
-        config["random_event_chance"] = min(0.15, config.get("random_event_chance", 0) + 0.02)
-
+            elif worst == "fuel_exhaustion":
+                if "initial_resources" in config:
+                    config["initial_resources"]["fuel_helicopter"] = max(1.0, config["initial_resources"].get("fuel_helicopter", 5) * 0.6)
+            elif worst == "road_blocks":
+                for edge in config.get("edges", []):
+                    if random.random() < 0.3:
+                        edge["status"] = "flooded"
+            elif worst == "late_evacuation":
+                for node in config.get("nodes", []):
+                    if node.get("type") == "village":
+                        node["injured_critical"] = int(node.get("injured_critical", 0) * 1.5)
+        
         return config
 
-    def extract_strategies(self, state: dict) -> List[dict]:
-        """Learn from successful episodes. Extract what WORKED as reusable rules.
-        Only extracts from episodes with score > 0.5.
-
-        Returns: list of new strategies added
-        """
-        if not self.episode_history:
-            return []
-
-        latest = self.episode_history[-1]
-        if latest["score"] < 0.5:
-            return []
-
-        new_strategies = []
-        action_history = state.get("action_history", [])
-
-        # Analyze action patterns from successful episode
-        tool_counts = {}
-        tool_rewards = {}
-        for entry in action_history:
-            tool = entry.get("tool_name", "")
-            reward = entry.get("reward", 0)
-            if tool not in tool_counts:
-                tool_counts[tool] = 0
-                tool_rewards[tool] = []
-            tool_counts[tool] += 1
-            tool_rewards[tool].append(reward)
-
-        # Strategy: tools with consistently positive rewards
-        for tool, rewards in tool_rewards.items():
-            if len(rewards) >= 2:
-                avg_reward = sum(rewards) / len(rewards)
-                success_rate = sum(1 for r in rewards if r > 0) / len(rewards)
-
-                if success_rate >= 0.7 and avg_reward > 0.03:
-                    rule = self._generate_rule_description(tool, success_rate, state)
-
-                    # Check if we already have this strategy
-                    existing_rules = [s["rule"] for s in self.strategy_memory]
-                    if rule not in existing_rules:
-                        strategy = {
-                            "rule": rule,
-                            "learned_after": latest["episode"],
-                            "success_rate": round(success_rate, 2),
-                            "avg_reward": round(avg_reward, 4),
-                            "tool": tool,
-                        }
-                        self.strategy_memory.append(strategy)
-                        new_strategies.append(strategy)
-
-        # Keep only top 10 strategies by success rate
-        self.strategy_memory.sort(key=lambda s: s["success_rate"], reverse=True)
-        self.strategy_memory = self.strategy_memory[:10]
-
-        return new_strategies
-
-    def _generate_rule_description(self, tool: str, success_rate: float, state: dict) -> str:
-        """Generate human-readable strategy description."""
-        rules = {
-            "dispatch_team": f"Dispatch rescue teams early to highest-population zones (success {success_rate:.0%})",
-            "allocate_resource": f"Allocate resources proportional to zone population (success {success_rate:.0%})",
-            "re_route": f"Immediately re-route teams when roads are blocked (success {success_rate:.0%})",
-            "request_airlift": f"Use helicopter for rooftop rescues in flooded zones (success {success_rate:.0%})",
-            "order_evacuation": f"Evacuate zones before hospital capacity fills up (success {success_rate:.0%})",
-            "deploy_scout": f"Scout dark zones before sending rescue teams (success {success_rate:.0%})",
-            "setup_comms": f"Restore communication in dark zones first for better intel (success {success_rate:.0%})",
-            "advance_hour": f"Advance time only after all available actions are taken (success {success_rate:.0%})",
-        }
-        return rules.get(tool, f"Use {tool} strategically (success {success_rate:.0%})")
-
-    def get_system_prompt_injection(self) -> str:
-        """Generate text to inject into LLM system prompt with learned strategies.
-        Used by inference.py to make agent smarter over episodes.
-        """
-        if not self.strategy_memory:
-            return ""
-
-        lines = ["Based on past experience, these strategies work well:"]
-        for s in self.strategy_memory[:5]:
-            lines.append(f"- {s['rule']}")
-
-        if self.current_weakness != "none":
-            lines.append(f"\nKnown weakness to work on: {self.current_weakness}")
-
-        return "\n".join(lines)
-
-    def get_dashboard_data(self) -> dict:
-        """Return data for the self-improvement dashboard panel."""
+    def get_status(self) -> dict:
         return {
-            "difficulty": round(self.difficulty, 1),
-            "current_weakness": self.current_weakness,
-            "episode_history": self.episode_history[-25:],  # last 25 episodes
-            "strategy_memory": self.strategy_memory,
-            "failure_counts": self.failure_counts,
-            "zone_type_performance": {
-                k: round(sum(v[-5:]) / max(len(v[-5:]), 1), 2)
-                for k, v in self.zone_type_performance.items()
-            },
-            "total_episodes": len(self.episode_history),
-            "avg_score": round(
-                sum(e["score"] for e in self.episode_history[-10:])
-                / max(len(self.episode_history[-10:]), 1),
-                3,
-            ) if self.episode_history else 0,
+            "generation": self.generation,
+            "episodes_analyzed": len(self.episode_history),
+            "failure_patterns": self.failure_patterns,
+            "strategy_memory": self.strategy_memory[-5:],
+            "next_scenario_targets": max(
+                self.failure_patterns, 
+                key=self.failure_patterns.get
+            ) if self.failure_patterns else "exploring"
         }
+    
+    def get_dashboard_data(self) -> dict:
+        """Compatibility method for env.py."""
+        status = self.get_status()
+        status["difficulty"] = self.difficulty
+        status["current_weakness"] = status["next_scenario_targets"]
+        return status
+
+# Singleton instance
+curriculum_engine = CurriculumEngine()

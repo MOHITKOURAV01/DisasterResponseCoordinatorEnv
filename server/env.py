@@ -9,7 +9,7 @@ from server.models import (
 from server.graph import CrisisGraph
 from server.agents import create_all_agents, BaseAgent
 from server.rewards import RewardCalculator
-from server.curriculum import CurriculumEngine
+from server.curriculum import curriculum_engine
 from server.tasks import get_task_config, generate_random_event
 
 
@@ -33,7 +33,7 @@ class DisasterResponseEnv:
         self.graph = CrisisGraph()
         self.agents: Dict[str, BaseAgent] = {}
         self.reward_calc = RewardCalculator()
-        self.curriculum = CurriculumEngine()
+        self.curriculum = curriculum_engine
 
         # State
         self.zones: List[dict] = []
@@ -146,7 +146,7 @@ class DisasterResponseEnv:
 
         # Reset reward calculator
         self.reward_calc.reset()
-        self.curriculum.reset_episode()
+        # curriculum reset not needed as it is a singleton tracker
 
         return self._build_observation_dict()
 
@@ -245,13 +245,20 @@ class DisasterResponseEnv:
         info = {"grader_score": 0.0}
         if self.done:
             grader_score = self.reward_calc.grade_episode(self._get_state_for_reward())
-            self.curriculum.analyze_episode(self._get_state_for_agents())
-            self.curriculum.extract_strategies(self._get_state_for_agents())
+            
+            # Real self-improvement: record episode for failure analysis
+            self.curriculum.record_episode({
+                "grader_score": grader_score,
+                "final_obs": self._build_observation_dict(),
+                "action_history": self.action_history,
+                "task_id": self.task_id
+            })
+            
             info["grader_score"] = grader_score
             info["episode_number"] = self.episode_number
             info["total_rescued"] = self.total_rescued
             info["total_deaths"] = self.total_deaths
-            info["difficulty"] = self.curriculum.difficulty
+            info["difficulty"] = getattr(self.curriculum, "difficulty", 3.0)
 
         obs = self._build_observation_dict()
         return {
@@ -278,7 +285,7 @@ class DisasterResponseEnv:
             "strategy_memory": self.curriculum.strategy_memory,
             "curriculum_difficulty": self.curriculum.difficulty,
             "episode_number": self.episode_number,
-            "current_weakness": self.curriculum.current_weakness,
+            "current_weakness": getattr(self.curriculum, "current_weakness", "none") if hasattr(self.curriculum, "current_weakness") else self.curriculum.get_status().get("next_scenario_targets", "none"),
             "total_rescued": self.total_rescued,
             "total_deaths": self.total_deaths,
             "reward_stats": self.reward_calc.get_stats(),

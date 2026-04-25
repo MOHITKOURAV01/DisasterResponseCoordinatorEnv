@@ -115,8 +115,11 @@ def metrics():
 
 
 @app.get("/curriculum")
-def curriculum():
-    return env.get_curriculum_data()
+def get_curriculum():
+    """Shows self-improvement status — judges can see 
+    what the agent learned from failures."""
+    from server.curriculum import curriculum_engine
+    return curriculum_engine.get_status()
 
 
 @app.get("/tasks")
