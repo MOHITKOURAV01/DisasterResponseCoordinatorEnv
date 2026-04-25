@@ -254,7 +254,20 @@ class DisasterResponseEnv:
             info["difficulty"] = self.curriculum.difficulty
 
         obs = self._build_observation_dict()
-        return {"observation": obs, "reward": reward, "done": self.done, "info": info}
+        return {
+            "observation": obs, 
+            "reward": reward, 
+            "done": self.done, 
+            "info": info,
+            "agent_reports": agent_reports,
+            "action": {
+                "tool_name": tool_name,
+                "params": params,
+                "reward": reward,
+                "hour": self.current_hour,
+                "conflict": conflict_resolved or "",
+            }
+        }
 
     def state(self) -> dict:
         """Return full state for debugging and dashboard."""
