@@ -66,7 +66,8 @@ DisasterResponseCoordinatorEnv is a graph-based sandbox where **8 AI agents** co
 *Average episode reward over training. Agent learns to rescue more people and avoid blocked roads.*
 
 ![Before vs After](plots/before_after.png)
-*Untrained agent: 25% rescue rate. Trained agent: 72%+ rescue rate.*
+*Random baseline: 0.480 grader score, ~30/50 rescued. 
+GRPO trained LLM: 0.776 grader score, 50/50 rescued (100% rescue rate).*
 
 ### Training Pipeline (TRL / GRPO)
 
@@ -77,11 +78,11 @@ Our training pipeline uses HuggingFace TRL's GRPOTrainer with a reward function 
 3. Environment returns rewards from 12-signal reward function
 4. GRPO optimizes policy using reward signals
 
-| Metric | Random Baseline | Smart Agent | Improvement |
-|--------|----------------|-------------|-------------|
-| Grader Score | ~0.15 | ~0.60 | +300% |
-| People Rescued | ~12/50 | ~36/50 | +200% |
-| Resource Efficiency | ~30% | ~70% | +133% |
+| Metric | Random Baseline | GRPO Trained LLM | Improvement |
+|--------|----------------|-----------------|-------------|
+| Grader Score | 0.480 | 0.776 | +62% |
+| People Rescued | ~30/50 | 50/50 | +67% |
+| Rescue Rate | 60% | 100% | +40pp |
 
 ![Step Rewards](plots/step_rewards.png)
 *Step-by-step reward showing positive (rescue) and negative (blocked road) signals.*
