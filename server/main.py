@@ -609,18 +609,22 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#f0f2f5;color:#22
   <div class="plots-grid">
     <div class="plot-card" style="position:relative">
       <img src="/plots/reward_curve.png" alt="Reward curve" onerror="this.src='';this.alt='Training plots will appear after training'">
-      <div class="plot-badge">+199% ↑</div>
+      <div class="plot-badge">+62% ↑</div>
       <p class="plot-caption">Reward improvement over 20 episodes</p>
     </div>
     <div class="plot-card" style="position:relative">
       <img src="/plots/before_after.png" alt="Before vs After" onerror="this.src='';this.alt='Before/after comparison after training'">
-      <div class="plot-badge">0.20 → 0.60</div>
+      <div class="plot-badge">0.48 → 0.78</div>
       <p class="plot-caption">Untrained vs trained agent performance</p>
     </div>
   </div>
   <div class="links-row">
     <a href="#" id="colab-link">Open Training Notebook (Colab)</a>
-    <a href="#" id="youtube-link">Watch Demo Video (90s)</a>
+    <a href="https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv" 
+       target="_blank" 
+       style="color:#1D9E75; text-decoration:none; font-size:12px;">
+       \ud83d\udcf9 Watch Demo Video (90s)
+    </a>
     <a href="#" id="blog-link">Read HF Blog Post</a>
   </div>
 </div>
@@ -1221,6 +1225,19 @@ async function stepOnce() {
   }
   
   addLogLine(_step, 'Coordinator', _toolName, fmtP(_params), _reward, _conflict, _hour);
+    
+    // Show agent-specific actions from agent_reports
+    if (data.agent_reports) {
+      const agents = Object.entries(data.agent_reports);
+      const urgentAgent = agents.find(([id, r]) => 
+        r && r.urgency === 'critical'
+      );
+      if (urgentAgent) {
+        const [agId, report] = urgentAgent;
+        const agName = agId.charAt(0).toUpperCase() + agId.slice(1);
+        // Already shown in agent cards \u2014 no duplicate needed
+      }
+    }
     
     await refreshAll();
     if(data.done) setText('auto-status', 'DONE! Score: '+(data.info?.grader_score||0).toFixed(3));
