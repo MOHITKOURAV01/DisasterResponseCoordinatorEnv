@@ -105,9 +105,9 @@ print(f"Reward: {result['reward']}")
 
 ## Results
 
-| Random Baseline | 0.472 | ~30/50 (60%) |
-| GRPO Trained LLM | 0.777 | ~50/50 (100%) |
-| **Improvement** | **+65%** | **+67%** |
+| Random Baseline | 0.919 | ~48/50 (96%) |
+| GRPO Trained LLM | 0.800 | ~42/50 (84%) |
+| **Improvement** | **-12.9%** | **-12%** |
 
 ![Before vs After Training](plots/before_after.png)
 *Random baseline (red) vs GRPO trained agent (green)*
@@ -161,10 +161,10 @@ Training runs are tracked with Weights & Biases:
 - Model: Qwen2.5-0.5B via Unsloth 4-bit
 
 Key training metrics:
-- Loss converged from 0.45 → 0.033 in 25 steps
+- Loss: 0.0766 in 25 steps
 - Reward improved from -0.08/step → +0.15/step
-- Grader score: random baseline 0.472 → trained 0.777 (+65%)
-- Rescue rate: 30/50 people → 50/50 people (100% rescue rate)
+- Grader score: random baseline 0.919 → trained 0.800 (-13%)
+- Rescue rate: 48/50 people → 42/50 people (84% rescue rate)
 
 ---
 

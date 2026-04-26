@@ -1,3 +1,4 @@
+from openenv_core import BaseEnv, TaskRegistry
 from typing import Dict, List, Optional, Any
 import random
 import copy
@@ -13,7 +14,7 @@ from server.curriculum import curriculum_engine
 from server.tasks import get_task_config, generate_random_event
 
 
-class DisasterResponseEnv:
+class DisasterResponseEnv(BaseEnv):
     """Core disaster response coordination environment.
 
     Implements all 4 hackathon themes:
@@ -847,3 +848,8 @@ class DisasterResponseEnv:
             "teams_total": len(self.teams),
             "dynamic_events_count": len(self.dynamic_events_log),
         }
+
+# Register all tasks in the OpenEnv Registry
+tasks = ["village_flood_rescue", "multi_district_cyclone", "earthquake_aftershock", "full_72hr_operation"]
+for tid in tasks:
+    TaskRegistry.register(tid, DisasterResponseEnv)
