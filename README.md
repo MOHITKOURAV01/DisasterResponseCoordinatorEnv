@@ -115,7 +115,9 @@ Our training pipeline uses HuggingFace TRL's GRPOTrainer with a reward function 
 3. Environment returns rewards from 12-signal reward function
 4. GRPO optimizes policy using reward signals
 
-| Grader Score | 0.472 | 0.777 | +65% |
+| Metric | Random Baseline | GRPO Trained LLM | Improvement |
+|--------|----------------|-----------------|-------------|
+| Grader Score | 0.480 | 0.776 | +62% |
 | People Rescued | ~30/50 | 50/50 | +67% |
 | Rescue Rate | 60% | 100% | +40pp |
 

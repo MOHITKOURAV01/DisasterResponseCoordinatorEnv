@@ -625,7 +625,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#f0f2f5;color:#22
     </div>
   </div>
   <div class="links-row">
-    <a href="#" id="colab-link">Open Training Notebook (Colab)</a>
+    <a href="https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb" id="colab-link" target="_blank">Open Training Notebook (Colab)</a>
     <a href="https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv" 
        target="_blank" 
        style="color:#1D9E75; text-decoration:none; font-size:12px;">
