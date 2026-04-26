@@ -16,6 +16,43 @@ pinned: false
 
 > *When every second counts, AI must coordinate. This environment trains LLMs to save lives.*
 
+## Agent Decision Loop
+```text
+┌─────────────────────────────────────────────────────┐
+│                  COORDINATOR LLM                     │
+│              (The model being trained)               │
+└────────────────────┬────────────────────────────────┘
+                     │ Observes
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│                  WORLD STATE                         │
+│  • Crisis map (zones, roads, hospitals)              │
+│  • 8 Agent reports (conflicts, status)              │
+│  • Resources (fuel, trucks, medicine)               │
+│  • Hour 0→72, Phase: Rescue→Relief→Rehab            │
+└────────────────────┬────────────────────────────────┘
+                     │ Chooses 1 of 8 tools
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│                  ACTIONS                             │
+│  dispatch_team   │ allocate_resource  │ re_route     │
+│  request_airlift │ order_evacuation   │ deploy_scout │
+│  setup_comms     │ advance_hour                      │
+└────────────────────┬────────────────────────────────┘
+                     │ Gets reward signal
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│              12-SIGNAL REWARD                        │
+│  +0.12 critical patient treated                      │
+│  +0.09 person rescued from danger zone              │
+│  -0.12 death before rescue reached                  │
+│  -0.08 team dispatched to blocked zone              │
+└────────────────────┬────────────────────────────────┘
+                     │ Learns via GRPO
+                     ▼
+            Better next decision
+```
+
 ## The Problem
 
 India experiences devastating losses during natural disasters due to fragmented coordination in the critical first 72 hours. While AI helps predict weather, **no standardized RL environment exists to train AI agents for real-time, dynamic resource allocation under chaos.**
@@ -142,7 +179,7 @@ This environment combines techniques from:
 ## Links
 
 - [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
-- [YouTube Demo (Coming Soon)](https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv)
+- [YouTube Demo](https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv)
 - [Blog Post](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv/blob/main/BLOG.md)
 - [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/Final_Training_notebook.ipynb)
 - [BLOG.md](BLOG.md) — Full writeup in HF Space
