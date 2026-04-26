@@ -166,7 +166,7 @@ This environment combines techniques from:
 ## Links
 
 - [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
-- [YouTube Demo](https://youtu.be/6jTdKUuEuSE?si=bIYDjtHzFoGCD8sX)
+- [YouTube Demo](https://youtu.be/EQnBCv8sjYQ?si=YCRgQqWt8_QZYCtr)
 - [Blog Post](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv/blob/main/BLOG.md)
 - [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
 - [BLOG.md](BLOG.md) — Full writeup in HF Space
