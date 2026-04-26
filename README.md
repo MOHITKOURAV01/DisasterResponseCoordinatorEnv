@@ -149,7 +149,7 @@ uvicorn server.main:app --port 7860
 ```
 
 ### Training (Colab)
-Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/Final_Training_notebook.ipynb) and click "Run All".
+Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb) and click "Run All".
 
 ## API Quick Reference
 
@@ -181,7 +181,7 @@ This environment combines techniques from:
 - [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
 - [YouTube Demo](https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv)
 - [Blog Post](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv/blob/main/BLOG.md)
-- [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/Final_Training_notebook.ipynb)
+- [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
 - [BLOG.md](BLOG.md) — Full writeup in HF Space
 
 ## Author
