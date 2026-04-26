@@ -629,7 +629,7 @@ body{font-family:-apple-system,system-ui,sans-serif;background:#f0f2f5;color:#22
     <a href="https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv" 
        target="_blank" 
        style="color:#1D9E75; text-decoration:none; font-size:12px;">
-       \ud83d\udcf9 Watch Demo Video (90s)
+       &#x1F4F9; Watch Demo Video (90s)
     </a>
     <a href="#" id="blog-link">Read HF Blog Post</a>
   </div>
@@ -1241,7 +1241,7 @@ async function stepOnce() {
       if (urgentAgent) {
         const [agId, report] = urgentAgent;
         const agName = agId.charAt(0).toUpperCase() + agId.slice(1);
-        // Already shown in agent cards \u2014 no duplicate needed
+        // Already shown in agent cards - no duplicate needed
       }
     }
     
