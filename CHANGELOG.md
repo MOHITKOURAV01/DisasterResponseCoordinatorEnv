@@ -1,68 +1,21 @@
-# Project History
+# Changelog
 
-- Minor refactoring and stability improvements update #1
-- Minor refactoring and stability improvements update #2
-- Minor refactoring and stability improvements update #3
-- Minor refactoring and stability improvements update #4
-- Minor refactoring and stability improvements update #5
-- Minor refactoring and stability improvements update #6
-- Minor refactoring and stability improvements update #7
-- Minor refactoring and stability improvements update #8
-- Minor refactoring and stability improvements update #9
-- Minor refactoring and stability improvements update #10
-- Minor refactoring and stability improvements update #11
-- Minor refactoring and stability improvements update #12
-- Minor refactoring and stability improvements update #13
-- Minor refactoring and stability improvements update #14
-- Minor refactoring and stability improvements update #15
-- Minor refactoring and stability improvements update #16
-- Minor refactoring and stability improvements update #17
-- Minor refactoring and stability improvements update #18
-- Minor refactoring and stability improvements update #19
-- Minor refactoring and stability improvements update #20
-- Minor refactoring and stability improvements update #21
-- Minor refactoring and stability improvements update #22
-- Minor refactoring and stability improvements update #23
-- Minor refactoring and stability improvements update #24
-- Minor refactoring and stability improvements update #25
-- Minor refactoring and stability improvements update #26
-- Minor refactoring and stability improvements update #27
-- Minor refactoring and stability improvements update #28
-- Minor refactoring and stability improvements update #29
-- Minor refactoring and stability improvements update #30
-- Minor refactoring and stability improvements update #31
-- Minor refactoring and stability improvements update #32
-- Minor refactoring and stability improvements update #33
-- Minor refactoring and stability improvements update #34
-- Minor refactoring and stability improvements update #35
-- Minor refactoring and stability improvements update #36
-- Minor refactoring and stability improvements update #37
-- Minor refactoring and stability improvements update #38
-- Minor refactoring and stability improvements update #39
-- Minor refactoring and stability improvements update #40
-- Minor refactoring and stability improvements update #41
-- Minor refactoring and stability improvements update #42
-- Minor refactoring and stability improvements update #43
-- Minor refactoring and stability improvements update #44
-- Minor refactoring and stability improvements update #45
-- Minor refactoring and stability improvements update #46
-- Minor refactoring and stability improvements update #47
-- Minor refactoring and stability improvements update #48
-- Minor refactoring and stability improvements update #49
-- Minor refactoring and stability improvements update #50
-- Minor refactoring and stability improvements update #51
-- Minor refactoring and stability improvements update #52
-- Minor refactoring and stability improvements update #53
-- Minor refactoring and stability improvements update #54
-- Minor refactoring and stability improvements update #55
-- Minor refactoring and stability improvements update #56
-- Minor refactoring and stability improvements update #57
-- Minor refactoring and stability improvements update #58
-- Minor refactoring and stability improvements update #59
-- Minor refactoring and stability improvements update #60
-- Minor refactoring and stability improvements update #61
-- Minor refactoring and stability improvements update #62
-- Minor refactoring and stability improvements update #63
-- Minor refactoring and stability improvements update #64
-- Minor refactoring and stability improvements update #65
-- Minor refactoring and stability improvements update #66
+## v1.0.0 — Grand Finale Release (April 2026)
+
+### Added
+- 8-agent multi-agent disaster response environment
+- 4 India-specific tasks: Bihar flood, Odisha cyclone, 
+  Gujarat earthquake, Tamil Nadu 72hr operation
+- NetworkX graph-based crisis zone with 15-20 nodes
+- 12-signal reward function with self-adaptive shaping
+- CurriculumEngine: failure-analysis-based adaptive difficulty
+- GRPO training pipeline via HuggingFace TRL + Unsloth
+- Live environment reward function (no synthetic dataset)
+- 11 REST API endpoints including /curriculum and /metrics
+- Real-time dashboard with crisis map and agent monitoring
+- Training results: Random 0.480 \u2192 GRPO Trained 0.776 (+62%)
+
+### Environment
+- Model: Qwen2.5-0.5B-Instruct via Unsloth 4-bit quantization
+- Training: GRPO with live environment reward function
+- Rescue rate: 100% (50/50 people) with trained agent
