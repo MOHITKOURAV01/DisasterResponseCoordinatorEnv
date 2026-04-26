@@ -143,44 +143,60 @@ class RewardCalculator:
         return reward
 
     def grade_episode(self, state: dict) -> float:
-        """
-        Deterministic grader. Score based on:
-        - rescue_rate: % people rescued (0-0.6 weight)
-        - efficiency: reward per step (0-0.2 weight)  
-        - phase_completion: did agent complete all 3 phases (0-0.1 weight)
-        - no_deaths: bonus for zero deaths (0.1 weight)
-        """
         try:
             total_pop = state.get("total_population", 0)
             total_rescued = state.get("total_rescued", 0)
             total_steps = max(state.get("current_hour", 1), 1)
             deaths = state.get("total_deaths", 0)
             current_phase = state.get("current_phase", "rescue")
-            total_reward = self.total_reward_this_episode
+            
+            # CRITICAL GUARD: if no steps taken, return near-zero
+            if total_steps <= 1:
+                return 0.001
+                
+            # CRITICAL GUARD: rescued cannot exceed population
+            total_rescued = min(total_rescued, total_pop)
             
             if total_pop <= 0:
                 return 0.001
             
-            # 1. Rescue rate (60% weight)
+            # Cap rescue_rate — random agent should NOT get 1.0
             rescue_rate = min(total_rescued / total_pop, 1.0)
-            rescue_score = rescue_rate * 0.60
+            
+            # Only give rescue credit if agent actively dispatched teams
+            # Check action history for meaningful actions
+            action_history = state.get("action_history", [])
+            meaningful_actions = [
+                a for a in action_history 
+                if isinstance(a, dict) and 
+                a.get("tool_name", "") not in ["advance_hour", ""]
+            ]
+            action_ratio = len(meaningful_actions) / max(total_steps, 1)
+            
+            # Scale rescue score by how actively agent worked
+            rescue_score = rescue_rate * 0.60 * max(action_ratio, 0.1)
             
             # 2. Efficiency (20% weight)
+            total_reward = self.total_reward_this_episode
             reward_per_step = total_reward / total_steps
             efficiency = min(max(reward_per_step / 0.5, 0), 1.0)
             efficiency_score = efficiency * 0.20
             
             # 3. Phase progression (10% weight)
-            phase_scores = {"rescue": 0.33, "relief": 0.66, "rehabilitation": 1.0}
+            phase_scores = {
+                "rescue": 0.33, 
+                "relief": 0.66, 
+                "rehabilitation": 1.0
+            }
             phase_score = phase_scores.get(current_phase, 0.33) * 0.10
             
             # 4. Death penalty (10% weight)
             death_rate = deaths / max(total_pop, 1)
             death_score = max(0, 1.0 - death_rate * 2) * 0.10
             
-            raw_score = rescue_score + efficiency_score + phase_score + death_score
+            raw_score = (rescue_score + efficiency_score + 
+                         phase_score + death_score)
             
-            # Clamp to strictly open interval (0.001, 0.999)
             return max(0.001, min(raw_score, 0.999))
             
         except Exception:
