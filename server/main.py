@@ -1405,9 +1405,24 @@ refreshAll();
 </html>"""
 
 
+def _sanitize_html(html: str) -> str:
+    """Remove surrogate characters that break UTF-8 encoding."""
+    return html.encode('utf-8', errors='replace').decode('utf-8')
+
 @app.get("/", response_class=HTMLResponse)
-def dashboard():
-    return DASHBOARD_HTML
+async def root():
+    try:
+        html = DASHBOARD_HTML
+        # Sanitize any surrogate characters
+        safe = html.encode('utf-8', errors='replace').decode('utf-8')
+        return HTMLResponse(content=safe, 
+                           headers={"Content-Type": "text/html; charset=utf-8"})
+    except Exception as e:
+        return HTMLResponse(
+            content="<h1>Dashboard loading...</h1>"
+                    "<p>Please refresh the page.</p>",
+            status_code=200
+        )
 
 # Refine chunk 0
 
