@@ -10,6 +10,12 @@ from server.env import DisasterResponseEnv
 from server.tasks import get_available_tasks
 
 # OpenEnv compliance marker
+def _safe_str(text: str) -> str:
+    """Remove surrogate characters that break UTF-8."""
+    if not isinstance(text, str):
+        text = str(text)
+    return text.encode('utf-8', errors='replace').decode('utf-8')
+
 try:
     import openenv_core
     OPENENV_VERSION = getattr(openenv_core, '__version__', '0.2.0')
@@ -1404,25 +1410,23 @@ refreshAll();
 </body>
 </html>"""
 
+DASHBOARD_HTML = DASHBOARD_HTML.encode(
+    'utf-8', errors='replace'
+).decode('utf-8')
 
-def _sanitize_html(html: str) -> str:
-    """Remove surrogate characters that break UTF-8 encoding."""
-    return html.encode('utf-8', errors='replace').decode('utf-8')
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
     try:
-        html = DASHBOARD_HTML
-        # Sanitize any surrogate characters
-        safe = html.encode('utf-8', errors='replace').decode('utf-8')
-        return HTMLResponse(content=safe, 
-                           headers={"Content-Type": "text/html; charset=utf-8"})
-    except Exception as e:
+        safe = DASHBOARD_HTML.encode(
+            'utf-8', errors='replace'
+        ).decode('utf-8')
         return HTMLResponse(
-            content="<h1>Dashboard loading...</h1>"
-                    "<p>Please refresh the page.</p>",
-            status_code=200
+            content=safe,
+            headers={"Content-Type": "text/html; charset=utf-8"}
         )
+    except Exception:
+        return HTMLResponse(content="<h1>Loading...</h1>")
 
 # Refine chunk 0
 
