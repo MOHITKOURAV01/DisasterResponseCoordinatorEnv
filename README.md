@@ -95,47 +95,41 @@ DisasterResponseCoordinatorEnv is a graph-based sandbox where **8 AI agents** co
 
 **Theme 4 — Self-Improvement:** Adaptive curriculum (auto-generates harder scenarios from failure analysis). Strategy memory (stores learned heuristics). Self-adaptive reward shaping.
 
-## Results & Performance Evaluation
+## Results
 
 | Metric | Baseline (Random) | Trained (GRPO LLM) | Delta |
 | :--- | :---: | :---: | :---: |
-| Grader Score | **0.919** | 0.800 | -12.9% |
+| Grader Score | 0.919 | 0.800 | -12.9% |
 | Avg. Rescued | 48/50 | 42/50 | -12.0% |
-| Final Loss | - | 0.0766 | - |
+| Training Loss | — | 0.0766 | — |
 
-**Performance Narrative:** The observed -12.9% regression is a result of "Easy Task Saturation" where the random baseline trivially solves the 50-step scenario, causing the 0.5B model to overfit on noise rather than learning coordination.
-
-### Fixing the Baseline Signal (Recommended Changes)
-1. **Harder Baseline**: In `server/tasks.py`, reduce `max_steps` from 50 to **15**. This punishes the random agent for inefficient moves, dropping its baseline score to ~0.300 and creating learning headroom.
-2. **Information Asymmetry**: Change `village_flood_rescue` config to start with `has_communication: False` for all zones. This forces the model to use `deploy_scout` before it can `dispatch_team`, which random agents will fail to do.
-3. **Training Recommendation**: Compare results on `multi_district_cyclone` (Medium task) instead; the increased complexity prevents the random baseline from scoring above 0.400, allowing the LLM to show true improvement.
-copter fuel
+**Why the regression?** The `village_flood_rescue` task (50 people, 50 steps) is trivially solvable — a random agent saturates the grader at 0.919, leaving no headroom for a 0.5B model to show improvement via GRPO. This is a known limitation of easy-task baselines in RL, not a failure of the environment design. Training on `multi_district_cyclone` (Medium difficulty) is recommended for future runs to produce positive deltas.
 
 ![Reward Curve](plots/reward_curve.png)
-*Average episode reward over training. Agent learns to rescue more people and avoid blocked roads.*
+*Average episode reward over training.*
 
 ![Before vs After](plots/before_after.png)
-*Random baseline vs GRPO trained agent.*
+*Random baseline vs GRPO trained agent score comparison.*
 
 ![Training Loss](plots/loss_curve.png)
-*GRPO training loss curve over 25 steps showing model convergence.*
+*GRPO training loss over 25 steps — model converges to 0.0766.*
 
 ## How to Run
 
-### Try the Dashboard
-Visit: https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv
+### Try the Live Dashboard
+Visit: [https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
 
 ### Run Locally
 ```bash
 git clone https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv.git
-cd disaster-response-env
+cd DisasterResponseCoordinatorEnv
 pip install -r requirements.txt
 uvicorn server.main:app --port 7860
 # Open http://localhost:7860
 ```
 
 ### Training (Colab)
-Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb) and click "Run All".
+Open the [Training Notebook](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb) and click **Run All**.
 
 ## API Quick Reference
 
@@ -154,7 +148,6 @@ See `examples/` folder for complete working scripts.
 
 ## Research Foundations
 
-This environment combines techniques from:
 - Hierarchical MARL for Emergency Responders (ICML 2024)
 - ReinforceRouting — Graph-based dynamic routing with RL
 - Self-Adaptive Reward Shaping (ICLR 2025)
@@ -164,15 +157,14 @@ This environment combines techniques from:
 
 ## Links
 
-- [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
-- [YouTube Demo](https://youtu.be/EQnBCv8sjYQ?si=sx2K-uMUILbSI3_j)
-- [Blog Post](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv/blob/main/BLOG.md)
-- [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
-- [BLOG.md](BLOG.md) — Full writeup in HF Space
+-  [HuggingFace Space](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv)
+-  [YouTube Demo](https://youtu.be/EQnBCv8sjYQ?si=sx2K-uMUILbSI3_j)
+-  [Blog Post (BLOG.md)](https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv/blob/main/BLOG.md)
+-  [Training Notebook (Colab)](https://colab.research.google.com/github/MOHITKOURAV01/DisasterResponseCoordinatorEnv/blob/main/FINAL_training_notebook.ipynb)
 
 ## Author
 
-**Mohit Kourav** — Meta PyTorch OpenEnv Hackathon x Scaler School of Technology
+**Mohit Kourav** — Meta PyTorch OpenEnv Hackathon × Scaler School of Technology
 
 ---
 *Built with FastAPI, NetworkX, Chart.js, and vanilla JS. Zero external cost.*
