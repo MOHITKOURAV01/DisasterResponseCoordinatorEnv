@@ -176,7 +176,7 @@ Key training metrics:
 
 **GitHub:** https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv
 
-**YouTube:** https://youtu.be/EQnBCv8sjYQ?si=YCRgQqWt8_QZYCtr
+**YouTube:** https://youtu.be/EQnBCv8sjYQ?si=sx2K-uMUILbSI3_j
 
 ---
 
