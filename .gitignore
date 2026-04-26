@@ -6,3 +6,13 @@ disaster_grpo_output/
 disaster_lora_model/
 plots/
 *.patch
+
+# Logs
+server.log
+*.log
+
+# Patch files
+*.patch
+
+# Debug files
+diff_changes.patch
