@@ -105,11 +105,9 @@ print(f"Reward: {result['reward']}")
 
 ## Results
 
-| Agent | Avg Grader Score | People Rescued |
-|-------|-----------------|----------------|
-| Random Baseline | ~0.15 | ~12/50 (24%) |
-| GRPO Trained LLM | ~0.60 | ~36/50 (72%) |
-| **Improvement** | **+300%** | **+200%** |
+| Random Baseline | 0.472 | ~30/50 (60%) |
+| GRPO Trained LLM | 0.777 | ~50/50 (100%) |
+| **Improvement** | **+65%** | **+67%** |
 
 ![Before vs After Training](plots/before_after.png)
 *Random baseline (red) vs GRPO trained agent (green)*
@@ -165,7 +163,8 @@ Training runs are tracked with Weights & Biases:
 Key training metrics:
 - Loss converged from 0.45 → 0.033 in 25 steps
 - Reward improved from -0.08/step → +0.15/step
-- Grader score: random baseline 0.15 → trained 0.80
+- Grader score: random baseline 0.472 → trained 0.777 (+65%)
+- Rescue rate: 30/50 people → 50/50 people (100% rescue rate)
 
 ---
 
