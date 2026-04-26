@@ -97,42 +97,29 @@ DisasterResponseCoordinatorEnv is a graph-based sandbox where **8 AI agents** co
 
 ## Results
 
-### Reward Improvement
+Training an LLM agent with GRPO on a live environment produced measurable improvements across all metrics:
+
+| Agent | Grader Score | Rescued | Deaths |
+|-------|-------------|---------|--------|
+| Random Baseline | 0.472 | ~30/50 | High |
+| Rule-Based Agent | 0.001 | ~0/50 | Very High |
+| **GRPO Trained LLM** | **0.777** | **50/50** | Low |
+| **Improvement** | **+65%** | **+67%** | — |
+
+Key findings:
+- Trained agent rescued **50/50 people** (100% rescue rate)
+- GRPO training improved grader score from **0.472 → 0.777**
+- Training loss dropped to **0.037** over 25 steps
+- Model learned to prioritize critical zones and conserve helicopter fuel
 
 ![Reward Curve](plots/reward_curve.png)
 *Average episode reward over training. Agent learns to rescue more people and avoid blocked roads.*
 
 ![Before vs After](plots/before_after.png)
-*Random baseline: 0.480 grader score, ~30/50 rescued. 
-GRPO trained LLM: 0.776 grader score, 50/50 rescued (100% rescue rate).*
-
-### Training Pipeline (TRL / GRPO)
-
-Our training pipeline uses HuggingFace TRL's GRPOTrainer with a reward function that connects directly to the live environment via HTTP:
-
-1. Environment generates crisis scenarios on HF Space
-2. LLM agent selects actions (8 MCP tools)
-3. Environment returns rewards from 12-signal reward function
-4. GRPO optimizes policy using reward signals
-
-| Metric | Random Baseline | GRPO Trained LLM | Improvement |
-|--------|----------------|-----------------|-------------|
-| Grader Score | 0.480 | 0.776 | +62% |
-| People Rescued | ~30/50 | 50/50 | +67% |
-| Rescue Rate | 60% | 100% | +40pp |
-
-![Step Rewards](plots/step_rewards.png)
-*Step-by-step reward showing positive (rescue) and negative (blocked road) signals.*
-
-![Task Comparison](plots/task_comparison.png)
-*Performance across all 4 difficulty levels — trained agent outperforms baseline on all tasks.*
-
-![Curriculum Evolution](plots/curriculum_evolution.png)
-*Adaptive curriculum shifts training scenarios to target agent's weaknesses.*
+*Random baseline vs GRPO trained agent.*
 
 ![Training Loss](plots/loss_curve.png)
-*GRPO training loss curve over 25 steps. 
-Loss: 0.45 → 0.033 showing model convergence.*
+*GRPO training loss curve over 25 steps showing model convergence.*
 
 ## How to Run
 
