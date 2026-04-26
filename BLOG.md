@@ -15,6 +15,23 @@ Wrong resources go to wrong places. Teams get conflicting
 orders. No AI system existed to learn and improve at this 
 coordination task — until now.
 
+## Why Existing Approaches Fail
+
+Current disaster response relies on:
+- Radio communication between field teams
+- Manual spreadsheets for resource tracking
+- Human coordinators making decisions under stress
+
+**The result:** In the 2013 Uttarakhand floods, 
+miscoordination meant some zones received 3x supplies 
+while others received nothing. 5,700 people died.
+
+An AI agent trained on our environment learns to:
+1. See all zones simultaneously (no information silos)
+2. Resolve conflicts between competing resource needs
+3. Adapt strategy as road conditions change
+4. Plan across all 72 hours, not just the next step
+
 ---
 
 ## What We Built
@@ -138,6 +155,20 @@ The reward function provides dense feedback at every step:
 
 ---
 
+## Experiment Tracking
+
+Training runs are tracked with Weights & Biases:
+- Project: `disaster-response-env`
+- Method: GRPO with live environment reward
+- Model: Qwen2.5-0.5B via Unsloth 4-bit
+
+Key training metrics:
+- Loss converged from 0.45 → 0.033 in 25 steps
+- Reward improved from -0.08/step → +0.15/step
+- Grader score: random baseline 0.15 → trained 0.80
+
+---
+
 ## Try It Yourself
 
 **Live Demo:** https://huggingface.co/spaces/mohitkourav/DisasterResponseCoordinatorEnv
@@ -154,5 +185,22 @@ This environment could train AI systems for:
 - **NDRF** (National Disaster Response Force) coordination
 - **State Emergency Management** decision support  
 - **NGO resource allocation** during crises
+
+## Reproducibility
+
+All training code is open source and runnable:
+
+```bash
+# Run the environment locally
+git clone https://github.com/MOHITKOURAV01/DisasterResponseCoordinatorEnv
+cd DisasterResponseCoordinatorEnv
+pip install -r requirements.txt
+uvicorn server.main:app --host 0.0.0.0 --port 7860
+
+# Open training notebook
+# File: FINAL_training_notebook.ipynb
+# Runtime: Google Colab T4 GPU
+# Time: ~15 minutes
+```
 
 *Open source. Build on it. Save lives.*
